@@ -1,0 +1,255 @@
+Only in script/common: common.excpt
+Only in script/common: common_setup.tcl
+Only in script/common: dbl_via_setup.tcl
+Only in script/common: dc_setup.tcl
+Only in script/common: dc_setup_filenames.tcl
+Only in script/common: design_setup.tcl
+Only in script/common: env_setup.tcl
+Only in script/common: floorplan
+Only in script/common: fm_setup.tcl
+Only in script/common: func
+Only in script/common: icc_setup.tcl
+Only in script/common: init_design_icc.tcl
+Only in script/common: outputs_icc.tcl
+Only in script/common: pgn_setup.tcl
+Only in script/common: process_setup.tcl
+Only in script/common: pt_eco_drc_buf.tcl
+diff -erw .synrm_patch_tmp/common/pt_setup.tcl script/common/pt_setup.tcl
+--- .synrm_patch_tmp/common/pt_setup.tcl 2017-06-11 23:51:24.120604 -0400
++++ script/common/pt_setup.tcl 2017-06-11 23:51:24.120626 -0400
+87,89c
+set eco_hold_buf_list $eco_drc_buf_list
+.
+80c
+set eco_drc_buf_list "$PT_ECO_DRC_BUF_LIST"
+.
+73a
+if {$input_from == "ICC"} {
+    set REPORTS_DIR "reports/pt_shell_icc"
+} else {
+    set REPORTS_DIR "reports/pt_shell_dc"
+}
+if {![file exists ${REPORTS_DIR}]} {
+    file mkdir $REPORTS_DIR
+}
+.
+72a
+######################################
+# Report Directory
+######################################
+.
+71c
+set DC_CONSTRAINT_FILES  "${RESULTS_DIR}/${DESIGN_NAME}.mapped.sdc"  
+set ICC_CONSTRAINT_FILES "${RESULTS_DIR}/${DESIGN_NAME}.output.sdc"
+
+##################################################################
+# Determine if we are using output of DC or ICC                  #
+##################################################################
+
+set input_from "NONE"
+if {[files_exist -files $ICC_NETLIST_FILES] && \
+    [files_exist -files $ICC_PARASITIC_MAX_FILES] && \
+    [files_exist -files $ICC_PARASITIC_MIN_FILES] && \
+    [files_exist -files $ICC_CONSTRAINT_FILES] } {
+    set input_from "ICC"
+} elseif { [files_exist -files $DC_NETLIST_FILES] && \
+           [files_exist -files $DC_PARASITIC_FILES] && \
+           [files_exist -files $DC_CONSTRAINT_FILES] } {
+    set input_from "DC"
+} else {
+    puts "RM-Error: Input from neither ICC nor DC is available"
+    exit
+}
+puts "RM-Info: Using outputs from $input_from"
+.
+65,66c
+set DC_PARASITIC_PATHS	 "${DESIGN_NAME}" 
+set DC_PARASITIC_FILES	 "${RESULTS_DIR}/${DESIGN_NAME}.mapped.spef"
+set ICC_PARASITIC_PATHS "${DESIGN_NAME}" ; # ${DESIGN_NAME}"
+set ICC_PARASITIC_MAX_FILES "${RESULTS_DIR}/${DESIGN_NAME}.output.sbpf.max"
+set ICC_PARASITIC_MIN_FILES "${RESULTS_DIR}/${DESIGN_NAME}.output.sbpf.min"
+.
+40,51c
+set DC_NETLIST_FILES               "${RESULTS_DIR}/${DESIGN_NAME}.mapped.v"
+set ICC_NETLIST_FILES              "${RESULTS_DIR}/${DESIGN_NAME}.output.pt.v"
+.
+34,37c
+set report_default_significant_digits 3 ;
+set sh_source_uses_search_path true ;
+.
+18,27d
+2,5c
+# Common setup
+source -echo ${DV_ROOT}/tools/synopsys/script/common/common_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+Only in script/common: pyhp_preprocess_setup.tcl
+Only in script/common: settings
+Only in script/common: vt_group_setup.tcl
+Only in script: eco
+Only in script: merge_gds
+Only in script: par
+Only in script: rvs
+Only in script/sta: pt.excpt
+diff -erw .synrm_patch_tmp/sta/pt.tcl script/sta/pt.tcl
+--- .synrm_patch_tmp/sta/pt.tcl 2017-06-11 23:51:24.120784 -0400
++++ script/sta/pt.tcl 2017-06-11 23:51:24.120791 -0400
+202a
+exit
+.
+201a
+if {$input_from == "DC"} {
+    extract_model -library_cell -test_design -output ${RESULTS_DIR}/${DESIGN_NAME}.dc -format {lib db} -block_scope
+    write_interface_timing ${REPORTS_DIR}/${DESIGN_NAME}_etm_netlist_interface_timing.dc.report
+} else {
+    extract_model -library_cell -test_design -output ${RESULTS_DIR}/${DESIGN_NAME}.icc -format {lib db} -block_scope
+    write_interface_timing ${REPORTS_DIR}/${DESIGN_NAME}_etm_netlist_interface_timing.icc.report
+}
+.
+195,200c
+if {$input_from == "DC"} {
+    write_interface_timing $REPORTS_DIR/${DESIGN_NAME}_ilm_netlist_timing.dc.report 
+} else {
+    write_interface_timing $REPORTS_DIR/${DESIGN_NAME}_ilm_netlist_timing.icc.report
+}
+.
+185,186c
+if {$input_from == "DC"} {
+    write_changes -format icctcl -output $RESULTS_DIR/eco_changes_dc.tcl
+} else {
+    write_changes -format icctcl -output $RESULTS_DIR/eco_changes_icc.tcl
+}
+.
+177c
+# fix hold with sequential cell sizing 
+.
+175c
+# fix setup with sequential cell sizing 
+.
+162c
+fix_eco_drc -type max_transition -method { size_cell insert_buffer } -verbose -buffer_list $eco_drc_buf_list -current_library 
+# fix max capacitance 
+fix_eco_drc -type max_capacitance -method { size_cell insert_buffer } -verbose -buffer_list $eco_drc_buf_list -current_library
+# fix max fanout 
+fix_eco_drc -type max_fanout  -method { size_cell insert_buffer } -verbose -buffer_list $eco_drc_buf_list -current_library
+.
+136,137c
+if {$input_from == "DC"} {
+    report_power -threshold_voltage_group > $REPORTS_DIR/${DESIGN_NAME}_pwr.dc.per_lib_leakage
+    report_threshold_voltage_group > $REPORTS_DIR/${DESIGN_NAME}_pwr.dc.per_volt_threshold_group
+} else {
+    report_power -threshold_voltage_group > $REPORTS_DIR/${DESIGN_NAME}_pwr.icc.per_lib_leakage
+    report_threshold_voltage_group > $REPORTS_DIR/${DESIGN_NAME}_pwr.icc.per_volt_threshold_group
+}
+.
+129a
+if {[file exists ${DV_ROOT}/tools/synopsys/script/common/vt_group_setup.tcl]} {
+    source -echo ${DV_ROOT}/tools/synopsys/script/common/vt_group_setup.tcl
+}
+.
+110,116c
+if {$input_from == "DC"} {
+    report_global_timing > $REPORTS_DIR/${DESIGN_NAME}_report_global_timing.dc.report
+    report_clock -skew -attribute > $REPORTS_DIR/${DESIGN_NAME}_report_clock.dc.report 
+    report_analysis_coverage > $REPORTS_DIR/${DESIGN_NAME}_report_analysis_coverage.dc.report
+    report_timing -slack_lesser_than 0.0 -delay min_max -nosplit -input -net  > $REPORTS_DIR/${DESIGN_NAME}_report_timing.dc.report
+    report_constraints -all_violators -verbose > $REPORTS_DIR/${DESIGN_NAME}_report_constraints.dc.report
+    report_design > $REPORTS_DIR/${DESIGN_NAME}_report_design.dc.report
+    report_net > $REPORTS_DIR/${DESIGN_NAME}_report_net.dc.report
+    write_sdf -context Verilog -exclude checkpins $RESULTS_DIR/${DESIGN_NAME}.mapped.pt.sdf
+} else {
+    report_global_timing > $REPORTS_DIR/${DESIGN_NAME}_report_global_timing.icc.report
+    report_clock -skew -attribute > $REPORTS_DIR/${DESIGN_NAME}_report_clock.icc.report 
+    report_analysis_coverage > $REPORTS_DIR/${DESIGN_NAME}_report_analysis_coverage.icc.report
+    report_timing -slack_lesser_than 0.0 -delay min_max -nosplit -input -net  > $REPORTS_DIR/${DESIGN_NAME}_report_timing.icc.report
+    report_constraints -all_violators -verbose > $REPORTS_DIR/${DESIGN_NAME}_report_constraints.icc.report
+    report_constraints  > $REPORTS_DIR/${DESIGN_NAME}_report_constraints.icc.summary
+    report_design > $REPORTS_DIR/${DESIGN_NAME}_report_design.icc.report
+    report_net > $REPORTS_DIR/${DESIGN_NAME}_report_net.icc.report
+    write_sdf -context Verilog -exclude checkpins $RESULTS_DIR/${DESIGN_NAME}.output.pt.sdf
+}
+.
+104c
+if {$input_from == "DC"} {
+    check_timing -verbose > $REPORTS_DIR/${DESIGN_NAME}_check_timing.dc.report
+} else {
+    check_timing -verbose > $REPORTS_DIR/${DESIGN_NAME}_check_timing.icc.report
+}
+.
+86,90c
+} else {
+    if  {[info exists ICC_CONSTRAINT_FILES]} {
+        foreach constraint_file $ICC_CONSTRAINT_FILES {
+            if {[file extension $constraint_file] eq ".sdc"} {
+                read_sdc -echo $constraint_file
+            } else {
+                source -echo $constraint_file
+            }
+        }
+    }
+}
+.
+77,78c
+if {$input_from == "DC"} {
+    if  {[info exists DC_CONSTRAINT_FILES]} {
+        foreach constraint_file $DC_CONSTRAINT_FILES {
+.
+68c
+                read_parasitics -path $para_path -format sbpf "$para_max_file $para_min_file" 
+            }
+.
+66c
+                read_parasitics -format sbpf "$para_max_file  $para_min_file"
+.
+63,64c
+if {$input_from == "DC"} {
+    if { [info exists DC_PARASITIC_PATHS] && [info exists DC_PARASITIC_FILES] } {
+        foreach para_path $DC_PARASITIC_PATHS para_file $DC_PARASITIC_FILES {
+            if {[string compare $para_path $DESIGN_NAME] == 0} {
+                read_parasitics -format spef $para_file 
+            } else {
+                read_parasitics -path $para_path -format spef $para_file 
+            }
+        }
+    }
+} else {
+    if { [info exists ICC_PARASITIC_PATHS] && [info exists ICC_PARASITIC_FILES] } {
+        foreach para_path $ICC_PARASITIC_PATHS \
+                para_max_file $ICC_PARASITIC_MAX_FILES \
+                para min_file $ICC_PARASITIC_MIN_FILES {
+.
+57a
+# This should be done after design is linked for primetime
+foreach {max_library min_library} "$MIN_LIBRARY_FILES $ADDITIONAL_MIN_LIBRARY_FILES" {
+  set_min_library $max_library -min_version $min_library
+}
+.
+44,53c
+if {$input_from == "DC"} {
+    read_verilog $DC_NETLIST_FILES
+} else {
+    read_verilog $ICC_NETLIST_FILES
+}
+.
+42a
+# WARNING: be careful to check which ports are mismatched if any
+set link_allow_design_mismatch true
+.
+35,41c
+# fail if we don't have a submodule timing model
+set link_create_black_boxes false
+.
+32c
+#    Netlist Reading Section                                     #
+.
+20,29c
+set DV_ROOT $::env(DV_ROOT)
+source -echo ${DV_ROOT}/tools/synopsys/script/common/pt_setup.tcl
+.
+8,15d
+0a
+# Modified by Princeton University on April 3, 2016
+.
+Only in script: syn

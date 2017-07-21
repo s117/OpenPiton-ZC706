@@ -1,0 +1,1022 @@
+Only in script/common: common.excpt
+Only in script/common: common_setup.tcl
+Only in script/common: dbl_via_setup.tcl
+Only in script/common: dc_setup.tcl
+Only in script/common: dc_setup_filenames.tcl
+Only in script/common: design_setup.tcl
+Only in script/common: env_setup.tcl
+Only in script/common: floorplan
+Only in script/common: fm_setup.tcl
+Only in script/common: func
+diff -erw .synrm_patch_tmp/common/icc_setup.tcl script/common/icc_setup.tcl
+--- .synrm_patch_tmp/common/icc_setup.tcl 2017-06-11 23:51:24.152567 -0400
++++ script/common/icc_setup.tcl 2017-06-11 23:51:24.152590 -0400
+609a
+set high_fanout_net_threshold 500
+.
+603a
+suppress_message "TIM-250"
+.
+590c
+   set_mw_lib_reference $MW_DESIGN_LIBRARY -mw_reference_library "$MW_REFERENCE_LIB_DIRS $ADDITIONAL_MW_REFERENCE_LIB_DIRS $MW_SOFT_MACRO_LIBS"
+.
+577,586d
+568,570d
+559,566c
+# ECO filee from PrimeTime post DC
+set ICC_POST_DC_PT_ECO_FILE       "${RESULTS_DIR}/eco_changes_dc.tcl"
+.
+556,557d
+554d
+527,534c
+set REPORTS_DIR_METAL_FILL                      $REPORTS_DIR/$ICC_METAL_FILL_CEL
+set REPORTS_DIR_DP            			$REPORTS_DIR/$ICC_FLOORPLAN_ODL_CEL
+set REPORTS_DIR_DP_CREATE_PLANGROUPS		$REPORTS_DIR/$ICC_DP_CREATE_PLANGROUPS_CEL
+set REPORTS_DIR_DP_ROUTEABILITY_ON_PLANGROUPS   $REPORTS_DIR/$ICC_DP_ROUTEABILITY_ON_PLANGROUPS_CEL
+set REPORTS_DIR_DP_PIN_ASSIGNMENT_BUDGETING     $REPORTS_DIR/$ICC_DP_PIN_ASSIGNMENT_BUDGETING_CEL
+set REPORTS_DIR_DP_COMMIT                       $REPORTS_DIR/$ICC_DP_COMMIT_CEL
+set REPORTS_DIR_DP_PREPARE_BLOCK                $REPORTS_DIR/prepare_block
+
+
+set ICC_FLOORPLAN_ODL_CEL    "init_design_odl"
+set ICC_DP_CREATE_PLANGROUPS_CEL "create_plangroups_dp"
+set ICC_DP_CREATE_ODL_CEL    "create_odl_dp"
+set ICC_DP_ROUTEABILITY_ON_PLANGROUPS_CEL "routeability_on_plangroups_dp"
+set ICC_DP_PIN_ASSIGNMENT_BUDGETING_CEL  "pin_assignment_budgeting_dp"
+set ICC_DP_COMMIT_CEL        "commit_dp"
+.
+516,525c
+set REPORTS_DIR_INIT_DESIGN                     $REPORTS_DIR/$ICC_FLOORPLAN_CEL
+set REPORTS_DIR_PLACE_OPT                       $REPORTS_DIR/$ICC_PLACE_OPT_CEL
+set REPORTS_DIR_CLOCK_OPT_CTS                   $REPORTS_DIR/$ICC_CLOCK_OPT_CTS_CEL
+set REPORTS_DIR_CLOCK_OPT_PSYN                  $REPORTS_DIR/$ICC_CLOCK_OPT_PSYN_CEL
+set REPORTS_DIR_CLOCK_OPT_ROUTE                 $REPORTS_DIR/$ICC_CLOCK_OPT_ROUTE_CEL
+set REPORTS_DIR_ROUTE                           $REPORTS_DIR/$ICC_ROUTE_CEL
+set REPORTS_DIR_ROUTE_OPT                       $REPORTS_DIR/$ICC_ROUTE_OPT_CEL
+set REPORTS_DIR_CHIP_FINISH                     $REPORTS_DIR/$ICC_CHIP_FINISH_CEL
+set REPORTS_DIR_ECO                        	$REPORTS_DIR/$ICC_ECO_CEL
+set REPORTS_DIR_FOCAL_OPT                       $REPORTS_DIR/$ICC_FOCAL_OPT_CEL
+.
+511,513c
+if {$ICC_ECO_RUN} {
+    set REPORTS_DIR             "reports/eco_shell"
+} else {
+    set REPORTS_DIR             "reports/icc_shell"               ;# Directory to write reports.
+}
+.
+468a
+} else {
+    set ICC_IMPLEMENTATION_PHASE        "block"
+}
+.
+463c
+if {${HIERARCHICAL}} {
+    set ICC_IMPLEMENTATION_PHASE		"top"         ;# default|block|top; set it to block or top to disable tasks such as Milkyway design library creation,
+.
+447c
+set ICC_TIO_HOST_OPTION 		"samehost"		;# lsf|grd|samehost|list_of_hosts; this controls the set_host_options value for TIO
+.
+442c
+set ICC_TIO_OPTIMIZE_BLOCK_INTERFACE    FALSE            ;# TRUE|FALSE; set TRUE for TIO to optimize interface logic
+.
+440a
+set ICC_TIO_BLOCK_LIST_DIRS     $ICC_BLOCK_ABSTRACTION_DIRS
+.
+435c
+set ICC_BLOCK_ABSTRACTIONS_LIST		$ICC_BLOCK_ABSTRACTION_DESIGNS		;# a list of all the block abstractions used in the design;
+.
+423c
+set ICC_DP_ODL_HOST_OPTION 	"samehost"			;# lsf|grd|samehost|list_of_hosts; this controls the set_host_options value for create_on_demand_netlist
+.
+409c
+set CUSTOM_ICC_DP_PNS_SCRIPT 		"script/pgn.dp.tcl"              ;# customized PNS script; replacing PNS section in scripts; for template based PNS, this is required
+.
+407c
+set ICC_DP_ALLOW_FEEDTHROUGH	        TRUE		;# TRUE|FALSE; allow feedthrough creation during pin assignment 
+.
+392c
+set PNS_VOLTAGE_SUPPLY     		0.9           	;# Unit in Volts; default is 1.5
+set PNS_SRAM_VOLTAGE_SUPPLY     0.95
+.
+381c
+set ICC_DP_SET_HFNS_AS_IDEAL_THRESHOLD	"500"		;# integer; specify a threshold to set nets with fanout larger than it as ideal nets
+.
+365d
+359,360c
+set ICC_ECO_FILE                "results/eco_changes_icc.tcl"     	;# a verilog netlist or Tcl file containing ECO changes - specify the file name and type of file using ICC_ECO_FLOW_TYPE
+set ICC_ECO_FLOW_TYPE		"pt_drc_setup_fixing_tcl" ;# verilog | pt_drc_setup_fixing_tcl | pt_hold_fixing_tcl - specify type of ECO file for UNCONSTRAINED ICC_ECO_FLOW;
+.
+354c
+set ICC_ECO_FLOW		"UNCONSTRAINED" 	;# NONE|UNCONSTRAINED|FREEZE_SILICON
+.
+348c
+set ICC_FOCAL_OPT_DRC_PIN_VIOLS  "all"             ;# filename|all - blank to skip; filename to fix violations from a file; specify "all" to fix all DRC pin violations
+.
+346c
+set ICC_FOCAL_OPT_SETUP_VIOLS    "all"          	;# filename|all - blank to skip; filename to fix violations from a file; specify "all" to fix all setup violations
+.
+337c
+#set TIMING_PRESERVE_SLACK_HOLD "100"     		;# float : hold slack threshold for wire_spreading/widening in chip_finishi_icc.tcl; default 0
+.
+335c
+#set TIMING_PRESERVE_SLACK_SETUP	"100"  		;# float : setup slack threshold for timing driven ICV metal fill; default 0.1
+.
+294c
+set FILLER_CELL                  "$FILLER_CELLS_LIST"
+.
+292a
+## These huge filler cells were removed from the list due to DRC cap violations: FILLEGCAP128_A9T* FILLEGCAP64_A9T* FILLEGCAP32_A9T*
+.
+287c
+set ICC_ROUTING_DIODES           "$ICC_ANTENNA_FIX_DIODES"             ;# space separated list of diode names
+.
+282,285c
+set ICC_USE_DIODES               TRUE          ;# TRUE|FALSE; control variable to allow diodes to be inserted both by the 
+.
+279c
+set ICC_CUSTOM_DBL_VIA_DEFINE_SCRIPT "${DV_ROOT}/tools/synopsys/script/common/dbl_via_setup.tcl"         ;# script to define the redundant via definitions
+.
+277c
+set ICC_DBL_VIA_FLOW_EFFORT      HIGH            ;# LOW|MED|HIGH  - MED enables concurrent soft-rule redundant via insertion
+.
+273,274c
+set ICC_H_CAP_CEL                  "$HORIZONTAL_END_CAP_CELL" ;# defines the horizontal CAP CELL library cell 
+set ICC_V_CAP_CEL                  "$VERTICAL_END_CAP_CELL" ;# defines the vertical CAP CELL library cell (for the Well Proximity Effect)
+.
+243c
+set ICC_CTS_LAYER_LIST		"${CLOCK_TREE_LAYERS}"		;# clock tree layers, usually M3 and above; e.g. set ICC_CTS_LAYER_LIST "M3 M4 M5"
+.
+204,235d
+176,177c
+set ICC_PHYSICAL_CONSTRAINTS_FILE 	"${DV_ROOT}/tools/synopsys/script/common/floorplan/common_post_floorplan.tcl"	;# script to add incremental floorplan constraints which will be sourced after read_def, read_floorplan, or floorplan creation
+set CUSTOM_CONNECT_PG_NETS_SCRIPT 	"script/connect_pg.tcl"      ;# script for customized derive_pg_connection commands which replaces the default derive_pg_connection commands in the scripts   
+.
+168c
+if {$DP_RUN} {
+    set ICC_IN_FLOORPLAN_USER_FILE      "script/floorplan.dp.tcl"
+} else {
+    set ICC_IN_FLOORPLAN_USER_FILE	  	"script/floorplan.tcl"	;# Complete floorplan file generated by user; This file will simply be sourced.
+}
+.
+165,166d
+161c
+set ICC_FLOORPLAN_INPUT           	"USER_FILE"   ;# DEF | FP_FILE | CREATE | USER_FILE | SKIP; "DEF" reads $ICC_IN_DEF_FILE; "FP_FILE" reads ICC_IN_FLOORPLAN_FILE;
+.
+155c
+set CUSTOM_CHIP_FINISH_POST_SCRIPT "script/preroute_stdcells.tcl"		;# An optional Tcl file; if specified, will be sourced before the route_opt -inc -size_only command;
+.
+153c
+set CUSTOM_FOCAL_OPT_POST_SCRIPT "script/preroute_stdcells.tcl"		;# An optional Tcl file; if specified, will be sourced after the focal_opt core commands;
+.
+149c
+set CUSTOM_ROUTE_OPT_POST_SCRIPT "script/preroute_stdcells.tcl"		;# An optional Tcl file; if specified, will be sourced right after the route_opt core command;
+.
+145c
+set CUSTOM_ROUTE_POST_SCRIPT "script/preroute_stdcells.tcl"			;# An optional Tcl file; if specified, will be sourced after the route_opt -initial_route_only command;
+.
+141c
+set CUSTOM_CLOCK_OPT_ROUTE_POST_CTO_SCRIPT "script/preroute_stdcells.tcl"	;# An optional Tcl file; if specified, will be sourced after the optimize_clock_tree command;
+.
+135c
+  set CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT "script/preroute_stdcells.tcl"	;# An optional Tcl file; if specified, will be sourced right after the clock_opt -only_psyn core command;
+.
+131c
+  set CUSTOM_CLOCK_OPT_CTS_POST_SCRIPT "script/preroute_stdcells.tcl"		;# An optional Tcl file; if specified, will be sourced right after the clock_opt -only_cts core command;
+.
+127c
+set CUSTOM_PLACE_OPT_POST_SCRIPT "script/preroute_stdcells.tcl"		;# An optional Tcl file; if specified, will be sourced right after the place_opt core command;
+.
+110c
+set ICC_FOCAL_OPT_STARTING_CEL	            $ICC_ROUTE_OPT_CEL        ;# CEL to run focal_opt on
+.
+82,94d
+72d
+63c
+set ICC_NUM_CORES                 12           	;# number of cores on the local host for multicore support; 
+.
+50,51c
+set PNET_METAL_LIST               "$STD_CELL_PIN_LAYERS"           	;# List of metals in the design to be used for (partial) pnet options
+set PNET_METAL_LIST_COMPLETE	  "$STD_CELL_PIN_LAYERS"	       	;# List of metals in the design to be used for (complete) pnet options
+.
+40c
+set ADD_FILLER_NWELL              FALSE
+set ADD_FILLER_NG                 TRUE
+set SIGNOFF_DRC_ENGINE            "ICV"              ;# ICV|HERCULES; signoff_drc using ICV or Hercules; more options in "Metal fill and Signoff DRC Variables" section                                               
+set ICC_REPORTING_EFFORT          "LOW"        ;# OFF|LOW|MED; if set to OFF, no reporting is done; if set to LOW, report_qor/report_constraints/report_power are skipped,
+.
+38d
+36c
+set ADD_METAL_FILL                "ICV"        
+.
+32,34c
+set ICC_FIX_ANTENNA               TRUE        ;# TRUE|FALSE: set TRUE to enable antenna fixing; more options in "Chipfinishing Variables" section
+set ADD_FILLER_CELL               TRUE        ;# TRUE|FALSE; set TRUE to enable std cells filler insertion; more options in "Chipfinishing Variables" section
+.
+28c
+set DFT                           FALSE	       ;# TRUE|FALSE; set TRUE to enable scan reordering flow and add -optimize_dft option to place_opt and clock_opt commands;
+.
+17c
+set ICC_INIT_DESIGN_INPUT         "DDC"         ;# VERILOG|DDC|MW; specify the type of starting point;
+.
+12c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/common_setup.tcl
+.
+10a
+# The ECO scripts use the same outputs_icc.tcl
+# script as normal place and route
+# IC compiler runs, with some small modifications
+# needed.  This provides a switch to reduce code 
+# duplication.  The ECO scripts set this variable
+# before sourcing this script.  The default is not
+# an ECO run
+if {![info exists ICC_ECO_RUN]} {
+        set ICC_ECO_RUN 0
+}
+
+# By default we make block abstraction and FRAM view, but may be
+# overridden by module specific scripts (top level chip probably
+# does not want this)
+set ICC_CREATE_MODEL TRUE
+
+.
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+diff -erw .synrm_patch_tmp/common/init_design_icc.tcl script/common/init_design_icc.tcl
+--- .synrm_patch_tmp/common/init_design_icc.tcl 2017-06-11 23:51:24.153062 -0400
++++ script/common/init_design_icc.tcl 2017-06-11 23:51:24.153071 -0400
+319,320c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+.
+317a
+## If you want to add additional floorplan details such as macro location, corner cells, io filler cells, or pad rings,
+## you can add them here :
+if {[file exists [which $ICC_PHYSICAL_CONSTRAINTS_FILE]] } {
+  source $ICC_PHYSICAL_CONSTRAINTS_FILE
+}
+
+.
+314c
+    add_end_cap -respect_padding -respect_blockage -respect_keepout -skip_fixed -lib_cell $ICC_H_CAP_CEL -vertical_cells $ICC_V_CAP_CEL -fill_corner
+.
+312c
+    add_end_cap -respect_padding -respect_blockage -respect_keepout -skip_fixed -lib_cell $ICC_H_CAP_CEL
+.
+303,306c
+if {$ICC_FLOORPLAN_INPUT == "USER_FILE"} {
+   if {[file exists [which $ICC_IN_FLOORPLAN_USER_FILE]]} { source -echo -verbose $ICC_IN_FLOORPLAN_USER_FILE}
+} 
+
+if {$ICC_FLOORPLAN_INPUT == "SKIP"} {
+.
+300c
+  create_floorplan \
+        -control_type aspect_ratio \
+        -core_aspect_ratio 1 \
+        -core_utilization 0.7 \
+        -left_io2core 30 \
+        -bottom_io2core 30 \
+        -right_io2core 30 \
+        -top_io2core 30 \
+        -start_first_row  
+  # Note : the value 30 is just an example, not a recommendation
+
+.
+296,297c
+  if {[file exists [which $ICC_IN_PIN_PAD_PHYSICAL_CONSTRAINTS_FILE]]} {
+  	read_pin_pad_physical_constraints $ICC_IN_PIN_PAD_PHYSICAL_CONSTRAINTS_FILE
+.
+294a
+if {$ICC_FLOORPLAN_INPUT == "CREATE"} {
+  if { [file exists [which $ICC_IN_PHYSICAL_ONLY_CELLS_CREATION_FILE]]} {source $ICC_IN_PHYSICAL_ONLY_CELLS_CREATION_FILE}
+  if { [file exists [which $ICC_IN_PHYSICAL_ONLY_CELLS_CONNECTION_FILE]]} {source $ICC_IN_PHYSICAL_ONLY_CELLS_CONNECTION_FILE}
+.
+278,281d
+214a
+
+.
+173a
+if { [check_error -verbose] != 0} { echo "RM-Error, flagging ..." }
+.
+172c
+# Fix hold time violations, priortize hold time
+set_fix_hold_options -prioritize_min_delay
+set_fix_hold [all_clocks]
+.
+167,169c
+# After reading in the design, apply any ECO available from Primetime
+if {[file exists ${ICC_POST_DC_PT_ECO_FILE}]} {
+    eco_netlist -by_tcl_file ${ICC_POST_DC_PT_ECO_FILE} 
+.
+135,165d
+128a
+# For hierarchical flow, make sure block abstractions are in FRAM view
+if {$ICC_IMPLEMENTATION_PHASE == "top" && $ICC_BLOCK_ABSTRACTIONS_LIST != ""} {
+  foreach block $ICC_BLOCK_ABSTRACTIONS_LIST {
+      change_macro_view -reference $block -view FRAM
+  }
+}
+
+.
+119d
+104,106c
+  set preserved_floating_nets "*"
+.
+102d
+94a
+# For hierarchical flow, set sub-blocks as block abstractions
+if {$ICC_IMPLEMENTATION_PHASE == "top" && $ICC_BLOCK_ABSTRACTIONS_LIST != ""} {
+  set_top_implementation_options -block_references $ICC_BLOCK_ABSTRACTIONS_LIST
+}
+.
+93a
+if {$ICC_INIT_DESIGN_INPUT == "DDC" || $ICC_INIT_DESIGN_INPUT == "VERILOG"} {
+    open_mw_lib $MW_DESIGN_LIBRARY
+}
+.
+87c
+            -mw_reference_library "$MW_REFERENCE_LIB_DIRS $ADDITIONAL_MW_REFERENCE_LIB_DIRS $MW_SOFT_MACRO_LIBS" \
+.
+58,62d
+17c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+10,15d
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/common/outputs_icc.tcl script/common/outputs_icc.tcl
+--- .synrm_patch_tmp/common/outputs_icc.tcl 2017-06-11 23:51:24.153324 -0400
++++ script/common/outputs_icc.tcl 2017-06-11 23:51:24.153335 -0400
+96a
+
+.
+94a
+
+    # Determine core area
+    set core_area [get_attribute [get_core_area] bbox]
+    set core_x1 [lindex [lindex $core_area 0] 0]
+    set core_y1 [lindex [lindex $core_area 0] 1]
+    set core_x2 [lindex [lindex $core_area 1] 0]
+    set core_y2 [lindex [lindex $core_area 1] 1]
+
+.
+87c
+    # Extract M5 and above and vias around pins
+    create_macro_fram -extract_blockage_by_merge_with_threshold {m6 0 0 m7 0 0 m8 0 0 m9 0 0 m10 0 0 m11 0 0 m12 0 0 m13 0 0 m14 0 0 m15 0 0} 
+.
+82,85c
+    source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+    source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+    source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+    source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+79a
+
+if {$ICC_CREATE_MODEL } {
+
+.
+77d
+75c
+   write_stream -lib_name $MW_DESIGN_LIBRARY -format gds $RESULTS_DIR/$DESIGN_NAME.gds
+.
+69,73c
+  set_write_stream_options \
+    -map_layer $MAP_LAYER_FILE \
+	-child_depth 99 \
+       -output_filling fill \
+       -output_outdated_fill \
+       -output_pin {geometry text}
+.
+65a
+#SDF
+write_sdf $RESULTS_DIR/$DESIGN_NAME.output.sdf
+.
+64a
+# For input back into DC
+write_def -all_vias -verbose -output ${DCRM_DCT_DEF_INPUT_FILE}
+.
+47,51c
+if {$ICC_WRITE_FULL_CHIP_VERILOG} {
+  write_verilog -diode_ports -no_physical_only_cells -force_output_references "" $RESULTS_DIR/$DESIGN_NAME.output.pt.v -macro_definition
+} else {
+  write_verilog -diode_ports -no_physical_only_cells -force_output_references "" $RESULTS_DIR/$DESIGN_NAME.output.pt.v
+}
+.
+42c
+write_verilog -pg -diode_ports $RESULTS_DIR/$DESIGN_NAME.output.pg.lvs.v
+.
+22a
+if { ! [file exists $PNS_OUTPUT_DIR] } { file mkdir $PNS_OUTPUT_DIR }
+
+# Analyze Power/Ground network
+#analyze_fp_rail \
+    -nets ${MW_POWER_NET} \
+    -power_budget ${PNS_POWER_BUDGET} \
+    -analyze_power \
+    -voltage_supply ${PNS_VOLTAGE_SUPPLY} \
+    -output_directory "${PNS_OUTPUT_DIR}/VDD" \
+    -use_pins_as_pads
+
+#analyze_fp_rail \
+    -nets ${MW_SRAM_POWER_NET} \
+    -power_budget ${PNS_POWER_BUDGET} \
+    -analyze_power \
+    -voltage_supply ${PNS_SRAM_VOLTAGE_SUPPLY} \
+    -output_directory "${PNS_OUTPUT_DIR}/VCS" \
+    -use_pins_as_pads
+
+#analyze_fp_rail \
+    -nets ${MW_GROUND_NET} \
+    -power_budget ${PNS_POWER_BUDGET} \
+    -analyze_power \
+    -voltage_supply ${PNS_VOLTAGE_SUPPLY} \
+    -output_directory "${PNS_OUTPUT_DIR}/VSS" \
+    -use_pins_as_pads
+
+.
+15c
+}
+.
+13a
+if {$ICC_ECO_RUN} { 
+    open_mw_cel $ICC_ECO_CEL -lib $MW_DESIGN_LIBRARY 
+} else { 
+.
+12d
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+# Sourcing this to output DEF back into DC, need filename
+source -echo ${DV_ROOT}/tools/synopsys/script/common/dc_setup_filenames.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+Only in script/common: pgn_setup.tcl
+Only in script/common: process_setup.tcl
+Only in script/common: pt_eco_drc_buf.tcl
+Only in script/common: pt_setup.tcl
+Only in script/common: pyhp_preprocess_setup.tcl
+diff -erw .synrm_patch_tmp/common/settings/common_cts_settings_icc.tcl script/common/settings/common_cts_settings_icc.tcl
+--- .synrm_patch_tmp/common/settings/common_cts_settings_icc.tcl 2017-06-11 23:51:24.153565 -0400
++++ script/common/settings/common_cts_settings_icc.tcl 2017-06-11 23:51:24.153573 -0400
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/common/settings/common_optimization_settings_icc.tcl script/common/settings/common_optimization_settings_icc.tcl
+--- .synrm_patch_tmp/common/settings/common_optimization_settings_icc.tcl 2017-06-11 23:51:24.153589 -0400
++++ script/common/settings/common_optimization_settings_icc.tcl 2017-06-11 23:51:24.153595 -0400
+98a
+
+.
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+diff -erw .synrm_patch_tmp/common/settings/common_placement_settings_icc.tcl script/common/settings/common_placement_settings_icc.tcl
+--- .synrm_patch_tmp/common/settings/common_placement_settings_icc.tcl 2017-06-11 23:51:24.153618 -0400
++++ script/common/settings/common_placement_settings_icc.tcl 2017-06-11 23:51:24.153624 -0400
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+diff -erw .synrm_patch_tmp/common/settings/common_post_cts_timing_settings.tcl script/common/settings/common_post_cts_timing_settings.tcl
+--- .synrm_patch_tmp/common/settings/common_post_cts_timing_settings.tcl 2017-06-11 23:51:24.153642 -0400
++++ script/common/settings/common_post_cts_timing_settings.tcl 2017-06-11 23:51:24.153648 -0400
+25,26c
+    set_fix_hold_options -preferred_buffer -effort high
+.
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+diff -erw .synrm_patch_tmp/common/settings/common_route_opt_tio_settings_icc.tcl script/common/settings/common_route_opt_tio_settings_icc.tcl
+--- .synrm_patch_tmp/common/settings/common_route_opt_tio_settings_icc.tcl 2017-06-11 23:51:24.153671 -0400
++++ script/common/settings/common_route_opt_tio_settings_icc.tcl 2017-06-11 23:51:24.153677 -0400
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+diff -erw .synrm_patch_tmp/common/settings/common_route_si_settings_zrt_icc.tcl script/common/settings/common_route_si_settings_zrt_icc.tcl
+--- .synrm_patch_tmp/common/settings/common_route_si_settings_zrt_icc.tcl 2017-06-11 23:51:24.153700 -0400
++++ script/common/settings/common_route_si_settings_zrt_icc.tcl 2017-06-11 23:51:24.153707 -0400
+155d
+144a
+       # add fixing antenna on PG
+       set_route_zrt_detail_options -check_antenna_on_pg true
+.
+131,132c
+    set_route_zrt_common_options \
+        -concurrent_redundant_via_mode reserve_space \
+        -concurrent_redundant_via_effort_level low \
+        -eco_route_concurrent_redundant_via_mode reserve_space \
+        -eco_route_concurrent_redundant_via_effort_level low
+    set_route_zrt_common_options -post_detail_route_redundant_via_insertion high
+    set_route_zrt_common_options -tie_off_mode rail_only
+    set_route_zrt_detail_options -optimize_wire_via_effort_level high    
+.
+125c
+  ## Specify a customized file 
+.
+77,79d
+69c
+set_route_zrt_detail_options -check_pin_min_area_min_length false
+set_route_zrt_detail_options -check_patchable_drc_from_fixed_shapes true -drc_convergence_effort_level high
+.
+65c
+set_route_opt_strategy -search_repair_loop 500
+.
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+Only in script/common: vt_group_setup.tcl
+Only in script/eco: eco.sh
+diff -erw .synrm_patch_tmp/eco/eco_icc.tcl script/eco/eco_icc.tcl
+--- .synrm_patch_tmp/eco/eco_icc.tcl 2017-06-11 23:51:24.153789 -0400
++++ script/eco/eco_icc.tcl 2017-06-11 23:51:24.153797 -0400
+148c
+        #signoff_metal_fill 
+      
+        #set_extraction_options -real_metalfill_extraction FLOATING
+.
+146c
+        # TODO: Doing signoff metal fill currently causes an error (probably because we do not provide
+        # a signoff fill runset).  For now we fix density errors manually.  This should be modified to fix
+        # density errors automatically
+.
+132c
+        #report_physical_signoff_options  
+
+        #signoff_metal_fill -purge
+.
+130c
+        # TODO: Doing signoff metal fill currently causes an error (probably because we do not provide
+        # a signoff fill runset).  For now we fix density errors manually.  This should be modified to fix
+        # density errors automatically 
+.
+112c
+        #report_physical_signoff_options  
+
+        #signoff_metal_fill -remove_overlap_by_rules min_spacing
+.
+110c
+        # TODO: Doing signoff metal fill currently causes an error (probably because we do not provide
+        # a signoff fill runset).  For now we fix density errors manually.  This should be modified to fix
+        # density errors automatically 
+.
+84,85c
+    if {$FILLER_CELL_METAL != ""} {insert_stdcell_filler -respect_keepout -cell_with_metal $FILLER_CELL_METAL -connect_to_power $MW_POWER_NET -connect_to_ground $MW_GROUND_NET}
+    if {$FILLER_CELL != ""} {insert_stdcell_filler -respect_keepout -cell_without_metal $FILLER_CELL -connect_to_power $MW_POWER_NET -connect_to_ground $MW_GROUND_NET}
+.
+20,23c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+set ICC_ECO_RUN 1
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+Only in script/eco: outputs_icc_eco.tcl
+Only in script: merge_gds
+diff -erw .synrm_patch_tmp/par/chip_finish_icc.tcl script/par/chip_finish_icc.tcl
+--- .synrm_patch_tmp/par/chip_finish_icc.tcl 2017-06-11 23:51:24.153904 -0400
++++ script/par/chip_finish_icc.tcl 2017-06-11 23:51:24.153911 -0400
+226,227c
+
+if {$ICC_FIX_ANTENNA} {
+   verify_zrt_route -antenna true ;
+} else {
+   verify_zrt_route -antenna false ;
+}
+.
+211a
+
+if {$ADD_FILLER_NWELL} {
+    #########################################
+    #             NWELL Filler              #
+    #########################################
+
+    insert_well_filler -layer NW
+}
+
+.
+203a
+
+if {[file exists [which $CUSTOM_CHIP_FINISH_POST_SCRIPT]]} {
+    echo "RM-Info: Sourcing [which $CUSTOM_CHIP_FINISH_POST_SCRIPT]"
+    source $CUSTOM_CHIP_FINISH_POST_SCRIPT
+}
+
+.
+181c
+#  It can be in TLUPlus, `plib or ALF format.
+.
+167c
+    if {$FILLER_CELL != ""} {insert_stdcell_filler -respect_keepout -cell_without_metal $FILLER_CELL -connect_to_power $MW_POWER_NET -connect_to_ground $MW_GROUND_NET}
+.
+129c
+  source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_opt_tio_settings_icc.tcl
+.
+117,122d
+109,111c
+   if {$FILLER_CELL_METAL != ""} {insert_stdcell_filler -respect_keepout -cell_with_metal $FILLER_CELL_METAL -connect_to_power $MW_POWER_NET -connect_to_ground $MW_GROUND_NET}
+   if {$FILLER_CELL != ""} {insert_stdcell_filler -respect_keepout -cell_without_metal $FILLER_CELL -connect_to_power $MW_POWER_NET -connect_to_ground $MW_GROUND_NET}
+.
+67d
+29c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+19,21c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+15c
+copy_mw_cel -from $ICC_FOCAL_OPT_CEL -to $ICC_CHIP_FINISH_CEL
+.
+12a
+
+
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/clock_opt_cts_icc.tcl script/par/clock_opt_cts_icc.tcl
+--- .synrm_patch_tmp/par/clock_opt_cts_icc.tcl 2017-06-11 23:51:24.154042 -0400
++++ script/par/clock_opt_cts_icc.tcl 2017-06-11 23:51:24.154049 -0400
+146a
+if {[file exists [which $CUSTOM_CLOCK_OPT_CTS_POST_SCRIPT]]} {
+echo "RM-Info: Sourcing [which $CUSTOM_CLOCK_OPT_CTS_POST_SCRIPT]"
+source $CUSTOM_CLOCK_OPT_CTS_POST_SCRIPT
+}
+.
+118c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+77,81d
+24c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_cts_settings_icc.tcl
+.
+20,21c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+.
+5c
+
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/clock_opt_psyn_icc.tcl script/par/clock_opt_psyn_icc.tcl
+--- .synrm_patch_tmp/par/clock_opt_psyn_icc.tcl 2017-06-11 23:51:24.154107 -0400
++++ script/par/clock_opt_psyn_icc.tcl 2017-06-11 23:51:24.154113 -0400
+150a
+if {[file exists [which $CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT]]} {
+echo "RM-Info: Sourcing [which $CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT]"
+source $CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT
+}
+
+.
+84c
+psynopt -effort "high"
+.
+67,71d
+29c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+26c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_cts_settings_icc.tcl
+.
+20,21c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+.
+11a
+ 
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/clock_opt_route_icc.tcl script/par/clock_opt_route_icc.tcl
+--- .synrm_patch_tmp/par/clock_opt_route_icc.tcl 2017-06-11 23:51:24.154182 -0400
++++ script/par/clock_opt_route_icc.tcl 2017-06-11 23:51:24.154188 -0400
+118a
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.channel_cap {report_channel_capacity -consider_pins true -consider_global_routing true}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.glbl_cong {report_congestion -routing_stage global}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.trck_cong {report_congestion -routing_stage track}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.detl_cong {report_congestion -routing_stage detail}
+.
+74d
+58,64c
+extract_rc -force
+update_timing
+suppress_message "TIM-250"
+set_attribute [get_cells -of [get_flat_pins [all_fanout -flat -from [get_attribute [get_clocks *] sources]] -filter pin_on_clock_network==true]] is_fixed true
+unsuppress_message "TIM-250"
+set psynopt_cmd "psynopt -area_recovery"
+if {$POWER_OPTIMIZATION} {lappend psynopt_cmd -power}
+echo $psynopt_cmd
+eval $psynopt_cmd  
+.
+35c
+source ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+32c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+29c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_cts_settings_icc.tcl
+.
+23,24c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+.
+13a
+ 
+.
+7c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/focal_opt_icc.tcl script/par/focal_opt_icc.tcl
+--- .synrm_patch_tmp/par/focal_opt_icc.tcl 2017-06-11 23:51:24.154282 -0400
++++ script/par/focal_opt_icc.tcl 2017-06-11 23:51:24.154290 -0400
+94c
+ source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_opt_tio_settings_icc.tcl
+.
+79c
+  } elseif {$ICC_FOCAL_OPT_DRC_PIN_VIOLS == "all"} {
+.
+29c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+19,21c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+12d
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+Only in script/par: icc.excpt
+Only in script/par: icc.sh
+diff -erw .synrm_patch_tmp/par/metal_fill_icc.tcl script/par/metal_fill_icc.tcl
+--- .synrm_patch_tmp/par/metal_fill_icc.tcl 2017-06-11 23:51:24.154346 -0400
++++ script/par/metal_fill_icc.tcl 2017-06-11 23:51:24.154353 -0400
+70c
+    #signoff_metal_fill 
+.
+67c
+  # TODO: Doing signoff metal fill currently causes an error (probably because we do not provide
+  # a signoff fill runset).  For now we fix density errors manually.  This should be modified to fix
+  # density errors automatically
+
+  #report_physical_signoff_options
+.
+57a
+if {$ADD_METAL_FILL == "HERCULES" } {
+  ########################################
+  #      HERCULES DRIVEN METAL FILL      # 
+  ########################################
+  if {[file exists [which $SIGNOFF_FILL_RUNSET]] } {
+    set_physical_signoff_options -exec_cmd hercules -fill_runset $SIGNOFF_FILL_RUNSET
+  }
+  if {$SIGNOFF_MAPFILE != ""} {set_physical_signoff_options -mapfile $SIGNOFF_MAPFILE}
+  report_physical_signoff_options
+
+  ## WA for STAR 9000440426 - Hercules - Could not open layer mapping file ../layer.map for reading,
+  #  which will be fixed in ICC version 2010.12-SP5 and the WA will be removed in next RM release.
+  #  WA is to use [which $SIGNOFF_MAPFILE] with -user_defined_option for HERCULES.
+  if {$SIGNOFF_MAPFILE != ""} {
+    signoff_metal_fill -user_defined_options "-lf [which $SIGNOFF_MAPFILE]"
+  } else {
+    signoff_metal_fill
+  }
+
+  set_extraction_options -real_metalfill_extraction FLOATING
+
+  if { [check_error -verbose] != 0} { echo "RM-Error, flagging ..." }
+}
+
+.
+20,23c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl 
+.
+12a
+
+
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/place_opt_icc.tcl script/par/place_opt_icc.tcl
+--- .synrm_patch_tmp/par/place_opt_icc.tcl 2017-06-11 23:51:24.154473 -0400
++++ script/par/place_opt_icc.tcl 2017-06-11 23:51:24.154485 -0400
+236a
+    redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.channel_cap {report_channel_capacity -consider_pins true -consider_global_routing true}
+    redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.glbl_cong {report_congestion -routing_stage global}
+    redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.trck_cong {report_congestion -routing_stage track}
+    redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.detl_cong {report_congestion -routing_stage detail}
+.
+220a
+if {[file exists [which $CUSTOM_PLACE_OPT_POST_SCRIPT]]} {
+echo "RM-Info: Sourcing [which $CUSTOM_PLACE_OPT_POST_SCRIPT]"
+source -echo -verbose $CUSTOM_PLACE_OPT_POST_SCRIPT
+}
+
+.
+144,148d
+126,130d
+123d
+31c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_cts_settings_icc.tcl 
+.
+27,28c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl 
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl 
+.
+20d
+15a
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+13,14c
+set DV_ROOT $::env(DV_ROOT)
+.
+6,10d
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/route_icc.tcl script/par/route_icc.tcl
+--- .synrm_patch_tmp/par/route_icc.tcl 2017-06-11 23:51:24.154564 -0400
++++ script/par/route_icc.tcl 2017-06-11 23:51:24.154570 -0400
+149,153c
+if {$ICC_FIX_ANTENNA} {
+   verify_zrt_route -antenna true ;
+} else {
+   verify_zrt_route -antenna false ;
+}
+.
+141a
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.channel_cap {report_channel_capacity -consider_pins true -consider_global_routing true}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.glbl_cong {report_congestion -routing_stage global}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.trck_cong {report_congestion -routing_stage track}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.detl_cong {report_congestion -routing_stage detail}
+.
+97a
+report_route_zrt_common_options
+
+.
+29c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+19,21c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+12a
+
+
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/route_opt_icc.tcl script/par/route_opt_icc.tcl
+--- .synrm_patch_tmp/par/route_opt_icc.tcl 2017-06-11 23:51:24.154649 -0400
++++ script/par/route_opt_icc.tcl 2017-06-11 23:51:24.154656 -0400
+202,203d
+195a
+#antenna fixing in the reference script is done in chip_finish_icc.tcl.
+#somehow, ICC does not fix antenna violation after critical area reduction in chip_finish_icc.tcl.
+#so moved it here
+if {$ICC_FIX_ANTENNA && $ICC_ROUTING_DIODES != ""} {
+    set_route_zrt_detail_options -antenna true -diode_libcell_names $ICC_ROUTING_DIODES -insert_diodes_during_routing true
+    route_zrt_detail -incremental true
+}
+
+if {[file exists [which $CUSTOM_ROUTE_OPT_POST_SCRIPT]]} {
+echo "RM-Info: Sourcing [which $CUSTOM_ROUTE_OPT_POST_SCRIPT]"
+source $CUSTOM_ROUTE_OPT_POST_SCRIPT
+}
+.
+174a
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.channel_cap {report_channel_capacity -consider_pins true -consider_global_routing true}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.glbl_cong {report_congestion -routing_stage global}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.trck_cong {report_congestion -routing_stage track}
+ redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.detl_cong {report_congestion -routing_stage detail}
+.
+172,173c
+ redirect -tee -file $REPORTS_DIR_PLACE_OPT/$ICC_ROUTE_OPT_CEL.qor -append {report_timing_histogram -range_maximum 0}
+ redirect -tee -file $REPORTS_DIR_PLACE_OPT/$ICC_ROUTE_OPT_CEL.qor -append {report_timing_histogram -range_minimum 0}
+.
+119,123d
+80c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_opt_tio_settings_icc.tcl
+.
+37c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_si_settings_zrt_icc.tcl
+.
+32,34c
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
+source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_post_cts_timing_settings.tcl
+.
+21,23c
+  if {$ICC_TIO_OPTIMIZE_BLOCK_INTERFACE && $ICC_TIO_BLOCK_LIST != "" && $ICC_TIO_HOST_OPTION != "" && $ICC_TIO_BLOCK_LIST_DIRS != ""} {
+    foreach block_dir $ICC_TIO_BLOCK_LIST_DIRS block $ICC_TIO_BLOCK_LIST {
+    copy_mw_cel -from_lib ../$block_dir/synopsys/${block}_LIB -from $block 
+.
+12a
+
+
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+diff -erw .synrm_patch_tmp/par/signoff_drc_icc.tcl script/par/signoff_drc_icc.tcl
+--- .synrm_patch_tmp/par/signoff_drc_icc.tcl 2017-06-11 23:51:24.154767 -0400
++++ script/par/signoff_drc_icc.tcl 2017-06-11 23:51:24.154774 -0400
+19c
+  ## WA for STAR 9000440426 - Hercules - Could not open layer mapping file ../layer.map for reading,
+  #  which will be fixed in ICC version 2010.12-SP5 and the WA will be removed in next RM release.
+  #  WA is to use [which $SIGNOFF_MAPFILE] for HERCULES, the "which" ensures full path is used.
+  if {$SIGNOFF_MAPFILE != "" && $SIGNOFF_DRC_ENGINE != "HERCULES"} {
+    set_physical_signoff_options -mapfile $SIGNOFF_MAPFILE
+  }
+  if {$SIGNOFF_MAPFILE != "" && $SIGNOFF_DRC_ENGINE == "HERCULES"} {
+.
+17a
+    }
+.
+16a
+  if {$SIGNOFF_DRC_ENGINE == "HERCULES"} {
+    set_physical_signoff_options -exec_cmd hercules -drc_runset $SIGNOFF_DRC_RUNSET
+  } elseif { $SIGNOFF_DRC_ENGINE == "ICV"} {
+.
+7a
+source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
+.
+6c
+set DV_ROOT $::env(DV_ROOT)
+.
+0a
+# Modified by Princeton University on April 3, 2016
+.
+Only in script: rvs
+Only in script: sta
+Only in script: syn

@@ -1,0 +1,601 @@
+Only in script/common: common.excpt
+diff -erw .synrm_patch_tmp/common/common_setup.tcl script/common/common_setup.tcl
+--- .synrm_patch_tmp/common/common_setup.tcl 2017-06-11 23:51:25.378733 -0400
++++ script/common/common_setup.tcl 2017-06-11 23:51:25.378762 -0400
+56,75c
+# For synopsys scripts, library and search path setup
+#
+if {[info exists synopsys_program_name]} {
+    # Allow these to be set without error message for all shells
+    set_app_var sh_allow_tcl_with_set_app_var_no_message_list [list target_library synthetic_library link_library test_simulation_library]
+    if {![info exists search_path]} { set_app_var search_path "" }
+    if {![info exists target_library]} { set_app_var target_library "" }
+    if {![info exists synthetic_library]} { set_app_var synthetic_library "" }
+    if {![info exists link_library]} { set_app_var link_library "" }
+    if {![info exists test_simulation_library]} { set_app_var test_simulation_library "" }
+    # Make sure target library doesn't have "your_library.db"
+    if {$target_library == "your_library.db"} { set_app_var target_library "" }
+    if {$link_library == " * your_library.db "} { set_app_var link_library " * " }
+
+    # Search path setup
+    set_app_var search_path     ". ./$RESULTS_DIR $SEARCH_PATH $ADDITIONAL_SEARCH_PATH $search_path"
+
+    # Target libraries setup
+    set_app_var target_library  "$TARGET_LIBRARY_FILES $ADDITIONAL_TARGET_LIBRARY_FILES $target_library"
+
+    # Synthetic library
+    if {$synopsys_program_name == "dc_shell"} {
+        set_app_var synthetic_library "dw_foundation.sldb"
+    }
+
+    # Link libraries
+    set_app_var link_library  "* $target_library $ADDITIONAL_LINK_LIB_FILES $synthetic_library $link_library"
+
+    # Set the variable to use Verilog libraries for Test Design Rule Checking
+    # (See dc.tcl for details)
+    set_app_var test_simulation_library "$TARGET_LIBRARY_VERILOG $test_simulation_library"
+    
+    # Not needed for formality and should be done after design is linked in primetime
+    if {$synopsys_program_name != "fm_shell" && $synopsys_program_name != "pt_shell"} {
+        ## Min/Max library relationships
+        #  For "set_operating_conditions -analysis_type on_chip_variation", 
+        #  it is not recommended if only -max is specified.
+        #  Only use it if both -max and -min of set_operating_conditions 
+        #  are specified and point to two different libraries
+        #  and are characterized to model OCV effects of the same corner.
+        foreach {max_library min_library} "$MIN_LIBRARY_FILES $ADDITIONAL_MIN_LIBRARY_FILES" {
+          set_min_library $max_library -min_version $min_library
+        }
+    }
+}
+.
+32,54d
+29,30c
+# The design planning version of the back-end scripts
+# set this variable before it sources this script.  Normal
+# runs of the back-end do not have this variable set, so we 
+# set it to 0 if it is not set
+if {![info exists DP_RUN]} {
+        set DP_RUN 0
+}
+
+# Setup any search paths you would like added here
+set SEARCH_PATH             ""
+set DESIGN_REF_DATA_PATH    $DV_ROOT
+
+# Design specific setup that is module independent
+eval "source ${SOURCE_ARGS} ${DV_ROOT}/tools/synopsys/script/common/design_setup.tcl"
+
+# Process specific setup
+eval "source ${SOURCE_ARGS} ${DV_ROOT}/tools/synopsys/script/common/process_setup.tcl"
+
+# Power/ground network setup
+eval "source ${SOURCE_ARGS} ${DV_ROOT}/tools/synopsys/script/common/pgn_setup.tcl"
+
+# Module specific setup
+if {$DP_RUN} {
+    eval "source ${SOURCE_ARGS} ./script/module_setup.dp.tcl"
+} else {
+    eval "source ${SOURCE_ARGS} ./script/module_setup.tcl"
+}
+
+# Results directory is the same for all scripts
+set RESULTS_DIR "results"
+if {![file exists ${RESULTS_DIR}]} {
+    file mkdir $RESULTS_DIR
+}
+
+# For a hierarchical flow, add the block-level results directories to the search
+# path to find the block-level design files.  Also add the the block-level MW
+# libraries and timing models for primetime
+foreach design_dir $HIERARCHICAL_DESIGNS_DIRS design $HIERARCHICAL_DESIGNS {
+    if {$design_dir != "" && $design != ""} {
+        lappend SEARCH_PATH ../${design_dir}/synopsys
+        lappend SEARCH_PATH ../${design_dir}/synopsys/${RESULTS_DIR}
+        lappend MW_REFERENCE_LIB_DIRS ../${design_dir}/synopsys/${design}_LIB
+        if {[info exists synopsys_program_name] && $synopsys_program_name == "pt_shell"} {
+            # TODO: For design planning hierarchical DC flow, need to add DC .db file instead
+            lappend ADDITIONAL_LINK_LIB_FILES ../${design_dir}/synopsys/${RESULTS_DIR}/${design}.icc_lib.db
+        }
+    }
+}
+.
+26c
+# Variables common to all reference methodology scripts
+# Script: common_setup.tcl
+# Version: I-2013.12-SP4 (July 14, 2014)
+# Copyright (C) 2007-2014 Synopsys, Inc. All rights reserved.
+.
+22,23c
+# Get custom functions
+source ${DV_ROOT}/tools/synopsys/script/common/func/func.tcl
+.
+18,20c
+# Setup environment variables
+eval "source ${SOURCE_ARGS} ${DV_ROOT}/tools/synopsys/script/common/env_setup.tcl"
+.
+12,16c
+# -echo is source command is a non-standard
+# extension of Tcl in Synopsys tools 
+# tclsh used in merge_gds cannot do this
+set SOURCE_ARGS "-echo"
+if {![info exists synopsys_program_name]} {
+    set SOURCE_ARGS ""
+}
+.
+10c
+puts "RM-Info: Running script [info script]\n"
+.
+1,8c
+# Modified by Princeton University on April 3, 2016
+.
+Only in script/common: dbl_via_setup.tcl
+diff -erw .synrm_patch_tmp/common/dc_setup.tcl script/common/dc_setup.tcl
+--- .synrm_patch_tmp/common/dc_setup.tcl 2017-06-11 23:51:25.379017 -0400
++++ script/common/dc_setup.tcl 2017-06-11 23:51:25.379025 -0400
+181d
+155a
+    # TLUplus files
+.
+148c
+      # If Milkyway design library already exists, ensure that it 
+      # is consistent with specified Milkyway reference libraries
+.
+131,139d
+123c
+set mw_reference_library "${MW_REFERENCE_LIB_DIRS} ${ADDITIONAL_MW_REFERENCE_LIB_DIRS}"
+.
+93,108d
+84,91c
+# Make reports and results directories
+if {![file exists ${REPORTS_DIR}]} {
+.
+82a
+# Reports and results directories
+set REPORTS_DIR "reports/dc_shell"
+.
+72c
+  set_host_options -max_cores 6
+.
+58a
+# Allow parameterized modules
+set hdlin_auto_save_templates false
+# Do not split buses
+set verilogout_single_bit false
+# Do not remove unconnected ports
+set verilogout_show_unconnected_pins true
+# No assign statements in output hdl
+set hdlout_internal_busses true
+# Bus naming
+set bus_naming_style {%s[%d]}
+set bus_inference_style $bus_naming_style
+# Report inferred latches, flip-flops, tri-states, and multiplexers
+set hdlin_reporting_level verbose
+# Write out top-level modules first when writing verilog files
+set verilogout_higher_designs_first true
+# Take into account constants when analyzing case statements
+set case_analysis_with_logic_constants true
+# Needed for forward SAIF file generation
+set power_preserve_rtl_hier_names true
+# High fanout net consideration threshold
+set high_fanout_net_threshold 500
+.
+13,40c
+# For hierarchical synthesis, block abstractions cannot be combined ILMs
+.
+1,2c
+# Modified by Princeton University on April 3, 2016
+
+# Common setup
+source -echo ${DV_ROOT}/tools/synopsys/script/common/common_setup.tcl
+
+# Filenames setup
+source -echo ${DV_ROOT}/tools/synopsys/script/common/dc_setup_filenames.tcl
+.
+diff -erw .synrm_patch_tmp/common/dc_setup_filenames.tcl script/common/dc_setup_filenames.tcl
+--- .synrm_patch_tmp/common/dc_setup_filenames.tcl 2017-06-11 23:51:25.379146 -0400
++++ script/common/dc_setup_filenames.tcl 2017-06-11 23:51:25.379153 -0400
+145,151d
+65a
+set DCRM_FINAL_CONSTRAINT_REPORT                        ${DESIGN_NAME}.mapped.constraint.rpt
+set DCRM_FINAL_VIOLATIONS_REPORT                        ${DESIGN_NAME}.mapped.violations.rpt
+.
+62a
+set DCRM_MAX_PATH_TIMING_REPORT                         ${DESIGN_NAME}.mapped.max_paths.rpt
+set DCRM_FINAL_TIMING_MAX_DELAY_REPORT                  ${DESIGN_NAME}.mapped.timing.max.rpt
+set DCRM_FINAL_TIMING_MIN_DELAY_REPORT                  ${DESIGN_NAME}.mapped.timing.min.rpt
+set DCRM_FINAL_TIMING_LOOP_REPORT                       ${DESIGN_NAME}.mapped.timing.loop.rpt
+.
+50c
+set DCRM_CONSTRAINTS_INPUT_FILE                         script/${DESIGN_NAME}.constraints.tcl
+.
+0a
+# Modified by Princeton University on April 3, 2016
+
+.
+Only in script/common: design_setup.tcl
+Only in script/common: env_setup.tcl
+Only in script/common: floorplan
+Only in script/common: fm_setup.tcl
+Only in script/common: func
+Only in script/common: icc_setup.tcl
+Only in script/common: init_design_icc.tcl
+Only in script/common: outputs_icc.tcl
+Only in script/common: pgn_setup.tcl
+Only in script/common: process_setup.tcl
+Only in script/common: pt_eco_drc_buf.tcl
+Only in script/common: pt_setup.tcl
+Only in script/common: pyhp_preprocess_setup.tcl
+Only in script/common: settings
+Only in script/common: vt_group_setup.tcl
+Only in script: eco
+Only in script: merge_gds
+Only in script: par
+Only in script/rvs: fm.excpt
+diff -erw .synrm_patch_tmp/rvs/fm.tcl script/rvs/fm.tcl
+--- .synrm_patch_tmp/rvs/fm.tcl 2017-06-11 23:51:25.379236 -0400
++++ script/rvs/fm.tcl 2017-06-11 23:51:25.379250 -0400
+209a
+# Write out status
+set status_fp [open ${REPORTS_DIR}/${FMRM_MATCH_STATUS_REPORT} "w"]
+puts -nonewline $status_fp $fm_status
+close $status_fp
+
+.
+207a
+  set fm_status "FAIL"
+} else {
+  set fm_status "PASS"
+.
+192d
+182c
+report_setup_status
+.
+170a
+#
+# Also, the user will need to manually perform set_dont_verify on dedicated scanout
+# ports to avoid verification failures on those ports.
+#
+# Example command format:
+#
+#   set_dont_verify_point -type port r:/WORK/${DESIGN_NAME}/<port_name>
+#   ...
+#
+.
+168a
+#   set_constant -type port r:/WORK/${DESIGN_NAME}/<port_name> <constant_value> 
+.
+161,165c
+# If IC Compiler has performed scan re-ordering, the user will need to manually
+# set constants on the scan enable and test mode signals to disable scan path
+# verification.
+.
+159c
+# Setup for scan re-ordering
+.
+153,156c
+# Doing full verification at every level to be conservative
+#if {${HIERARCHICAL}} {
+#    foreach design ${HIERARCHICAL_DESIGNS} {
+#        set_black_box r:/WORK/${design}
+#        set_black_box i:/WORK/${design}
+#    }
+#}
+.
+144,145c
+        read_milkyway -i -no_pg -libname WORK -cell_name $DCRM_FINAL_MW_CEL_NAME $DC_IMPLEMENTED_DESIGN_SOURCES
+    } 
+} else {
+    read_verilog -i $ICC_IMPLEMENTED_DESIGN_SOURCES
+}
+.
+124,141c
+if {$INPUT_FROM == "DC"} {
+    if {$ICC_INIT_DESIGN_INPUT == "VERILOG"} {
+        read_verilog -i $DC_IMPLEMENTED_DESIGN_SOURCES
+    } elseif {$ICC_INIT_DESIGN_INPUT == "DDC"} {
+        read_ddc -i $DC_IMPLEMENTED_DESIGN_SOURCES
+    } elseif {$ICC_INIT_DESIGN_INPUT == "MW"} {
+.
+117,121c
+# Read in the Implementation Design
+.
+109,112c
+if {$INPUT_FROM == "DC"} {
+    read_verilog -r $DC_REFERENCE_DESIGN_SOURCES -work_library WORK
+} else {
+    if {$ICC_INIT_DESIGN_INPUT == "VERILOG"} {
+        read_verilog -r $ICC_REFERENCE_DESIGN_SOURCES
+    } elseif {$ICC_INIT_DESIGN_INPUT == "DDC"} {
+        read_ddc -r $ICC_REFERENCE_DESIGN_SOURCES
+    } elseif {$ICC_INIT_DESIGN_INPUT == "MW"} {
+        # Note: Milkyway design format is not supported with UPF flow in Formality
+        # The -no_pg option should be used for MW designs from DC to prevent automatic 
+        # linking to power aware versions of the cells.
+        read_milkyway -r -no_pg -libname WORK -cell_name $ICC_INPUT_CEL $ICC_REFERENCE_DESIGN_SOURCES
+    }
+}
+.
+106c
+# Read in the Reference Design
+.
+101c
+foreach tech_lib [lsort -unique $target_library] {
+.
+95c
+set_svf ${FMRM_SVF_FILES}
+.
+66c
+set_app_var verification_clock_gate_hold_mode any
+.
+45,46c
+    set_app_var verification_set_undriven_signals BINARY:X
+}
+.
+42,43c
+if {$INPUT_FROM == "DC"} {
+    set_app_var verification_set_undriven_signals synthesis
+} else {
+.
+15c
+# set_app_var synopsys_auto_setup true
+.
+9a
+# Parts of this script taken from IC compiler reference, DC compiler reference (both hierarchical and flat)
+.
+5,6c
+# Design Compiler Block-Level Reference Methodology Script for Hierarchical Flow
+# Script: fm.tcl
+.
+1c
+# Modified by Princeton University on April 3, 2016
+
+set DV_ROOT $::env(DV_ROOT)                                                                                      
+source -echo ${DV_ROOT}/tools/synopsys/script/common/fm_setup.tcl
+.
+Only in script: sta
+Only in script/syn: dc.excpt
+diff -erw .synrm_patch_tmp/syn/dc.tcl script/syn/dc.tcl
+--- .synrm_patch_tmp/syn/dc.tcl 2017-06-11 23:51:25.379491 -0400
++++ script/syn/dc.tcl 2017-06-11 23:51:25.379499 -0400
+706a
+}
+
+.
+659a
+    # Create Design Compiler ILM for Hierarchical Flow
+    #
+    # If the design makes use of latch time borrowing, ILM compaction should
+    # be disabled with the following option:
+    #
+    # create_ilm -compact none
+    #################################################################################
+    
+    if {${DC_ILM_HIER_DESIGNS} != ""} {
+      # Write out the original interface timing before creating the ILM
+      write_interface_timing -nosplit ${REPORTS_DIR}/${DCRM_FINAL_INTERFACE_TIMING_REPORT}
+    
+      create_ilm
+    
+      # Write out the interface timing after creating the ILM
+      write_interface_timing -nosplit ${REPORTS_DIR}/${DCRM_FINAL_ILM_INTERFACE_TIMING_REPORT}
+    
+      # Now verify that the ILM interface timing matches the original design using compare_interface_timing
+      # For more information about interface timing differences that can occur with ILM creation,
+      # refer to the following SolvNet article: "ILM Creation and Verification Guidelines - 
+      # Using the write_interface_timing and compare_interface_timing Commands"
+      # https://solvnet.synopsys.com/retrieve/029724.html
+    
+      compare_interface_timing \
+                  ${REPORTS_DIR}/${DCRM_FINAL_INTERFACE_TIMING_REPORT} \
+                  ${REPORTS_DIR}/${DCRM_FINAL_ILM_INTERFACE_TIMING_REPORT} \
+                  -output ${REPORTS_DIR}/${DCRM_FINAL_ILM_CHECK_INTERFACE_TIMING_REPORT} \
+                  -nosplit -sort_by_worst
+      write -format ddc -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_ILM_DDC_OUTPUT_FILE}
+    }
+
+} else {
+
+    ################################################################################
+.
+657c
+report_threshold_voltage_group -nosplit > ${REPORTS_DIR}/${DCRM_THRESHOLD_VOLTAGE_GROUP_REPORT}
+
+if {!${HIERARCHICAL}} {
+.
+650a
+report_constraint > ${REPORTS_DIR}/${DCRM_FINAL_CONSTRAINT_REPORT}
+report_constraint -all_violators -verbose > ${REPORTS_DIR}/${DCRM_FINAL_VIOLATIONS_REPORT}
+
+.
+639,642c
+  #  gui_stop
+  #} else {
+  #  puts "Information: The DISPLAY environment variable is not set. Congestion map generation has been skipped."
+  #}
+.
+636,637c
+  #  # The following saves the entire congestion map layout window with the legends
+  #  gui_write_window_image -window ${MyLayout} -format png -file ${REPORTS_DIR}/${DCRM_DCT_FINAL_CONGESTION_MAP_WINDOW_OUTPUT_FILE}
+.
+633,634c
+  #  # The following saves only the congestion map without the legends
+  #  gui_write_window_image -format png -file ${REPORTS_DIR}/${DCRM_DCT_FINAL_CONGESTION_MAP_OUTPUT_FILE}
+.
+630,631c
+  #  # Write the congestion map out to an image file
+  #  # You can specify the output image type with -format png | xpm | jpg | bmp
+.
+627,628c
+  #  # Zoom full to display complete floorplan
+  #  gui_zoom -window [gui_get_current_window -view] -full
+.
+624,625c
+  #  # Display congestion map in layout window
+  #  gui_show_map -map "Global Route Congestion" -show true
+.
+621,622c
+  #  # Build congestion map in case report_congestion was not previously run
+  #  report_congestion -build_map
+.
+618,619c
+  #  # Create a layout window
+  #  set MyLayout [gui_create_window -type LayoutWindow]
+.
+615,616c
+  # No license for this
+  #if {[info exists env(DISPLAY)]} {
+  #  gui_start
+.
+609c
+  #report_congestion > ${REPORTS_DIR}/${DCRM_DCT_FINAL_CONGESTION_REPORT}
+.
+594a
+report_timing -transition_time -nets -attributes -nosplit -max_paths 10 > ${REPORTS_DIR}/${DCRM_MAX_PATH_TIMING_REPORT}
+report_timing -nosplit -crosstalk_delta -capacitance -transition_time -input_pins -nets -delay max > ${REPORTS_DIR}/${DCRM_FINAL_TIMING_MAX_DELAY_REPORT} 
+report_timing -nosplit -crosstalk_delta -capacitance -transition_time -input_pins -nets -delay min > ${REPORTS_DIR}/${DCRM_FINAL_TIMING_MIN_DELAY_REPORT}
+report_timing -loop -max_paths 10 > ${REPORTS_DIR}/${DCRM_FINAL_TIMING_LOOP_REPORT}
+
+.
+539a
+create_block_abstraction
+
+if {!${HIERARCHICAL}} {
+
+    #################################################################################
+    # Write out Design
+    #################################################################################
+    
+    write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
+    write -format ddc     -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_DDC_OUTPUT_FILE}
+    
+    # Write and close SVF file and make it available for immediate use
+    set_svf -off
+
+}
+.
+537a
+if {!${HIERARCHICAL}} {
+
+    # If this will be a sub-block in a hierarchical design, uniquify with block unique names
+    # to avoid name collisions when integrating the design at the top level
+    
+    set_app_var uniquify_naming_style "${DESIGN_NAME}_%s_%d"
+    uniquify -force
+}
+
+.
+524c
+# Tthis command is unstable, sometimes crashes?
+#optimize_netlist -area
+.
+513c
+if {$DP_RUN} {
+    compile_ultra -gate_clock -no_autoungroup 
+} else {
+    compile_ultra -gate_clock 
+}
+.
+510c
+    compile_ultra -gate_clock -check_only
+.
+438a
+
+}
+
+.
+435a
+if {${HIERARCHICAL}} {
+
+.
+412a
+# Fix hold time violations
+set_fix_hold [all_clocks]
+
+if {[shell_is_in_topographical_mode]} {
+    # Fix all DRC violations
+    set_app_var compile_final_drc_fix all
+}
+
+# Optimize for area
+#set_max_area 0.0
+
+# Fix warnings about clock not being propogated through
+# clock-gating cells
+set_app_var case_analysis_propagate_through_icg  true
+
+.
+385c
+  if {[file exists ${DCRM_DCT_PHYSICAL_CONSTRAINTS_INPUT_FILE}]} {
+.
+372c
+  if {[file exists ${DCRM_DCT_FLOORPLAN_INPUT_FILE}]} {
+.
+367c
+  if {[file exists ${DCRM_DCT_FLOORPLAN_INPUT_FILE}.objects]} {
+.
+337c
+  if {[file exists ${DCRM_DCT_DEF_INPUT_FILE}]} {
+.
+268,270c
+      if {[file exists ${DV_ROOT}/tools/synopsys/script/common/vt_group_setup.tcl]} {
+          source -echo ${DV_ROOT}/tools/synopsys/script/common/vt_group_setup.tcl
+      }
+.
+201d
+199a
+# We use max-min library pairs (only one operating condition for each library)
+.
+186,195d
+181c
+if {[file exists ${DCRM_CONSTRAINTS_INPUT_FILE}]} {
+.
+177c
+if {[file exists ${DCRM_SDC_INPUT_FILE}]} {
+.
+169a
+}
+.
+113a
+if {${HIERARCHICAL}} {
+
+.
+102,110d
+99d
+95,96d
+93c
+    if {[get_designs -quiet ${HIERARCHICAL_DESIGNS}] != ""} {
+      remove_design -hierarchy [get_designs -quiet ${HIERARCHICAL_DESIGNS}]
+    }
+.
+91a
+if {${HIERARCHICAL}} {
+
+.
+89c
+# Preprocess the RTL with PyHP
+source -echo ${DV_ROOT}/tools/synopsys/script/common/pyhp_preprocess_setup.tcl
+set RTL_SOURCE_FILES [pyhp_preprocess -rtl ${RTL_SOURCE_FILES}]
+
+analyze -format verilog -define "${DEFAULT_MACROS} ${ADDITIONAL_MACROS}" ${RTL_SOURCE_FILES}
+.
+86a
+}
+
+.
+67a
+if {${HIERARCHICAL}} {
+
+.
+4,5c
+# Design Compiler Block-Level and Top-Level Reference Methodology Script for Hierarchical Flow
+# Script: dc.tcl (combined with dc_top.tcl)
+.
+1c
+# Modified by Princeton University on April 3, 2016
+
+set DV_ROOT $::env(DV_ROOT)
+
+# Common setup
+source -echo ${DV_ROOT}/tools/synopsys/script/common/dc_setup.tcl
+.
