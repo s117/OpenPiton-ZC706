@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Copyright (c) 2015 Princeton University
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
 #     * Neither the name of Princeton University nor the
 #       names of its contributors may be used to endorse or promote products
 #       derived from this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY PRINCETON UNIVERSITY "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -115,12 +115,12 @@ def slurm_launch(cmd, log, tpn, mem_mb, time_str, jname, dep_list) :
     fp.write("#SBATCH --mem=%d                      # mem=%dMB\n" % (mem_mb, mem_mb))
     fp.write("#SBATCH -t %s                         # walltime=%s\n" % (time_str, time_str))
     fp.write("#SBATCH -J %s                         # jobname=%s\n\n" % (jname, jname))
-    
+
     fp.write(' '.join(cmd) + " > " + log)
 
     fp.close()
     os.chmod(slurm_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
-    
+
     # Submit job, retrying on fails
     slurm_cmd = ["sbatch"]
     if dep_list != None and len(dep_list) > 0:
@@ -170,7 +170,7 @@ def run_ise(log, script, design_dir, board, slurm, tpn, mem_mb, time_str, jname,
         flog = open(log, "w")
         subprocess.call(cmd, stdout=flog, stderr=flog)
         flog.close()
-        return None 
+        return None
 
 def makeProject(board, design_data, work_dir, log_dir, slurm, dep_list):
     prev_dir = os.getcwd()
@@ -192,6 +192,35 @@ def makeProject(board, design_data, work_dir, log_dir, slurm, dep_list):
     elif (tool == "ise") :
         jid = run_ise(proj_log, proj_script, design_data["PATH"], board, \
                       slurm, 1, 4096, "1:00:00", jname, dep_list)
+
+    os.chdir(prev_dir)
+
+    return jid
+
+def upgradeIPs(board, design_data, work_dir, log_dir, def_list, slurm, dep_list):
+    prev_dir = os.getcwd()
+
+    os.chdir(work_dir)
+
+    # Generate additional defines file that will be sourced in tcl script
+    f = open("additional_defines.tcl", "w")
+    print >> f, "set PROTOSYN_RUNTIME_DEFINES \"%s\"" % ' '.join(def_list)
+    f.close()
+
+    tool = find_board_tool(board)
+
+    print_info("Upgrading IPs")
+    design_board_dir = os.path.join(design_data["PATH"], board)
+    impl_log = os.path.join(log_dir, "ip_upgrade.log")
+    impl_flow = os.path.join(DV_ROOT, "tools/src/proto/" + tool + "/upgrade_ips.tcl")
+    jname = "protosyn_upips_%s_%s" % (board, design_data["ID"])
+    jid = None
+    if (tool == "vivado"):
+        jid = run_vivado(impl_log, impl_flow, design_data["PATH"], board, \
+                         slurm, 8, 64000, "6:00:00", jname, dep_list)
+    elif (tool == "ise"):
+        jid = run_ise(impl_log, impl_flow, design_data["PATH"], board, \
+                      slurm, 8, 64000, "6:00:00", jname, dep_list)
 
     os.chdir(prev_dir)
 
@@ -294,7 +323,7 @@ def checkCmdOptions(options):
         usage()
         exit(0)
 
-    # Check if design is specified 
+    # Check if design is specified
     # (It has a default value so always should be)
     if (options.design == None):
         print_error("Invalid parameters")
@@ -318,7 +347,7 @@ def checkCmdOptions(options):
     if (options.board not in design_data["BOARDS"]):
         print_error("Unsupported board")
         usage()
-        exit(2) 
+        exit(2)
 
     # Check board exists in board list
     if (find_board_tool(options.board) == None):
@@ -616,7 +645,7 @@ def main():
         makeMemMapping(st_brd, work_dir, log_dir)
 
     ################################################
-    # Generate UART init sequence for ASM tests 
+    # Generate UART init sequence for ASM tests
     # based on system frequency
     ################################################
     if options.uart_dmw != None:
@@ -626,13 +655,19 @@ def main():
     ##################################
     # Run FPGA flow
     ##################################
+    dep_list = []
+
     jid = None
     if run_make_project:
         jid = makeProject(options.board, design_data, work_dir, log_dir, options.slurm, None)
+        if jid != None:
+            dep_list.append(jid)
+        jid = upgradeIPs(options.board, design_data, work_dir, log_dir, defines, options.slurm, dep_list)
+        if jid != None:
+            dep_list.append(jid)
 
-    dep_list = []
-    if jid != None:
-        dep_list.append(jid)
+
+
 
     ## TODO: update this options for simulations from VCS
     if run_gen_test_bram:

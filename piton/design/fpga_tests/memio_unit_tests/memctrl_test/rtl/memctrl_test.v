@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Princeton University
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 //     * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
 //     * Neither the name of Princeton University nor the
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY PRINCETON UNIVERSITY "AS IS" AND
 // ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -70,7 +70,7 @@ module memctrl_test(
 `endif // endif PITON_CHIPSET_DIFF_CLK
 `else // ifdef PITON_MEMCTRL_TEST_SIM_CLKS
     input                                       test_sys_clk,
-    input                                       mc_sys_clk,                             
+    input                                       mc_sys_clk,
 `endif
 
     input                                       rst_n,
@@ -107,6 +107,9 @@ module memctrl_test(
 parameter                                   MEMSIZE_BYTES = 1024;
 parameter                                   MEMSIZE_BYTES_LOG2 = 10;
 `elsif GENESYS2_BOARD
+parameter                                   MEMSIZE_BYTES = 1073741824;
+parameter                                   MEMSIZE_BYTES_LOG2 = 30;
+`elsif ZC706_BOARD
 parameter                                   MEMSIZE_BYTES = 1073741824;
 parameter                                   MEMSIZE_BYTES_LOG2 = 30;
 `endif
@@ -281,7 +284,7 @@ begin
     case (sw[TEST_MODE_BITS_HI:TEST_MODE_BITS_LO])
         TEST_SEQ_WALKING_ONES:
         begin
-            test_mode_en = 5'd1; 
+            test_mode_en = 5'd1;
             test_seq_en = 1'b1;
             test_par_en = 1'b0;
         end
@@ -309,7 +312,7 @@ begin
             test_seq_en = 1'b0;
             test_par_en = 1'b1;
         end
-        default: 
+        default:
         begin
             test_mode_en = 4'd0;
             test_seq_en = 1'b0;
@@ -329,7 +332,7 @@ begin
         test_running = seq_test_running;
         test_done = seq_test_done;
         test_timeout = seq_test_timeout;
-        test_passed = seq_test_passed; 
+        test_passed = seq_test_passed;
     end
     else if (test_par_en)
     begin
@@ -420,7 +423,7 @@ mem_test_seq_driver mem_test_seq_driver (
     .en(test_seq_en),
 
     .test_mode_en(test_mode_en[2:0]),
-    
+
     .addr_mode(sw[ADDRESSING_MODE_BITS_HI:ADDRESSING_MODE_BITS_LO]),
     .addr_incr_val(addr_incr_val),
     .data_payload_flits(data_payload_flits),

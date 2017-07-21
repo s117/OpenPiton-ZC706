@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Copyright (c) 2015 Princeton University
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
 #     * Neither the name of Princeton University nor the
 #       names of its contributors may be used to endorse or promote products
 #       derived from this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY PRINCETON UNIVERSITY "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -43,25 +43,29 @@ MODEL_DIR = os.environ['MODEL_DIR']
 DESIGN_BLOCK_LIST = os.path.join(DV_ROOT, "tools/src/proto/block.list")
 MAP_MODULE_NAME = "storage_addr_trans.v"
 NOC_PAYLOAD_WIDTH = 512
+# ddr - MIG_APP_DATA_WIDTH
 STORAGE_BLOCK_BIT_WIDTH         =   {   "ddr":  {   "vc707":512,
                                                     "nexys4ddr":128,
                                                     "genesys2":256,
+                                                    "zc706":512,
                                                     "nexysVideo":128
                                                 },
                                         "bram": {   "vc707":512,
                                                     "nexys4ddr":512,
                                                     "genesys2":512,
+                                                    "zc706":512,
                                                     "nexysVideo":512,
                                                     "piton_board":512
                                                 },
                                         "dmw":  {   "vc707":512,
                                                     "nexys4ddr":512,
                                                     "genesys2":512,
+                                                    "zc706":512,
                                                     "nexysVideo":512,
                                                     "piton_board":512
                                                 }
                                     }
-
+# ddr - MIG_APP_MASK_WIDTH
 STORAGE_ADDRESSABLE_BIT_WIDTH   =   {   "ddr":  {   "vc707":64,
                                                     "nexys4ddr":16,
                                                     "genesys2":32,
@@ -80,21 +84,24 @@ STORAGE_ADDRESSABLE_BIT_WIDTH   =   {   "ddr":  {   "vc707":64,
                                                     "piton_board":512
                                                 }
                                     }
-
+# ddr - 8 * size_in_byte
 STORAGE_BIT_SIZE                =   {   "ddr":  {   "vc707":8*2**30,
                                                     "nexys4ddr":8*128*2**20,
                                                     "genesys2":8*2**30,
+                                                    "zc706":8*2**30,
                                                     "nexysVideo":8*512*2**20
                                                 },
                                         "bram": {   "vc707":16384*512,
                                                     "nexys4ddr":16384*512,
                                                     "genesys2":16384*512,
+                                                    "zc706":16384*512,
                                                     "nexysVideo":16384*512,
                                                     "piton_board":256*512
                                                 },
                                         "dmw":  {   "vc707":8*2**30,
                                                     "nexys4ddr":8*128*2**20,
                                                     "genesys2":8*2**30,
+                                                    "zc706":8*2**30,
                                                     "nexysVideo":8*512*2**20
                                                 }
                                     }
@@ -102,8 +109,9 @@ DW_BIT_SIZE     = 64
 DW_BYTE_SIZE    = DW_BIT_SIZE / 8
 
 
-UART_BAUD_RATE = 115200
+# UART_BAUD_RATE = 115200
 # UART_BAUD_RATE = 921600
+UART_BAUD_RATE = 576000
 
 OLED_STRING_LEN = 64
 
@@ -182,13 +190,13 @@ def isTranslatorOK(addr_data_map, flog):
             print >> flog, "ERROR: Address %s is not mapped in %s" % (hex(addr), map_loc)
             print >> sys.stderr, "ERROR: Address %s is not mapped in %s" % (hex(addr), map_loc)
             return False
- 
+
     return True
 
 
 def getTestList(fname, flog, ustr_files=False):
     f = open(fname, 'r')
-    
+
     test_list = list()
     suff = "ustr" if ustr_files else "s"
     for line in f:

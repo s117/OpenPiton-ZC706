@@ -668,9 +668,11 @@ end
     assign leds[0] = clk_locked;
     assign leds[1] = ~piton_ready_n;
     assign leds[2] = init_calib_complete;
-    assign leds[3] = processor_offchip_noc2_valid;
-    assign leds[4] = offchip_processor_noc3_valid;
-    assign leds[5] = 1'b0;
+    wire led_blink;
+    assign leds[3] = led_blink & rst_n_rect;
+//    assign leds[3] = processor_offchip_noc2_valid;
+//    assign leds[4] = offchip_processor_noc3_valid;
+//    assign leds[5] = 1'b0;
     `ifdef PITONSYS_IOCTRL
         `ifdef PITONSYS_UART
             `ifdef PITONSYS_UART_BOOT
