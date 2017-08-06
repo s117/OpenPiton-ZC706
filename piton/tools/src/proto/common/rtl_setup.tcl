@@ -459,6 +459,7 @@ set CHIPSET_RTL_IMPL_FILES [list \
     "${DV_ROOT}/design/chipset/rtl/chipset.v" \
     "${DV_ROOT}/design/chipset/rtl/chipset_impl.v" \
     "${DV_ROOT}/design/chipset/rtl/chipset_impl_noc_power_test.v" \
+    "${DV_ROOT}/design/chipset/rtl/clk_indicator.v" \
     "${DV_ROOT}/design/chipset/rtl/blinker.v" \
     "${DV_ROOT}/design/chipset/rtl/storage_addr_trans.v" \
     "${DV_ROOT}/design/chipset/rtl/storage_addr_trans_unified.v" \

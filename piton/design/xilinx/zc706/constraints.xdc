@@ -23,6 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set_property BITSTREAM.General.UnconstrainedPins {Allow} [current_design]
+
 # Set DCI_CASCADE
 set_property slave_banks {34} [get_iobanks 33]
 
@@ -74,28 +76,21 @@ set_property PACKAGE_PIN AC19 [get_ports uart_tx]
 set_property IOSTANDARD LVCMOS25 [get_ports uart_tx]
 
 # Switches
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[7]}]
-#set_property PACKAGE_PIN P27 [get_ports {sw[7]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[6]}]
-#set_property PACKAGE_PIN P26 [get_ports {sw[6]}]
-#set_property IOSTANDARD LVCMOS12 [get_ports {sw[5]}]
-#set_property PACKAGE_PIN P19 [get_ports {sw[5]}]
-#set_property IOSTANDARD LVCMOS12 [get_ports {sw[4]}]
-#set_property PACKAGE_PIN N19 [get_ports {sw[4]}]
-#set_property IOSTANDARD LVCMOS12 [get_ports {sw[3]}]
-#set_property PACKAGE_PIN K19 [get_ports {sw[3]}]
-#set_property IOSTANDARD LVCMOS12 [get_ports {sw[2]}]
-#set_property PACKAGE_PIN H24 [get_ports {sw[2]}]
-#set_property IOSTANDARD LVCMOS12 [get_ports {sw[1]}]
-#set_property PACKAGE_PIN G25 [get_ports {sw[1]}]
-#set_property IOSTANDARD LVCMOS12 [get_ports {sw[0]}]
-#set_property PACKAGE_PIN G19 [get_ports {sw[0]}]
 # GPIO_DIP_SW2
 set_property PACKAGE_PIN AC17 [get_ports {sw[6]}]
 set_property IOSTANDARD LVCMOS25 [get_ports {sw[6]}]
 # GPIO_DIP_SW3
 set_property PACKAGE_PIN AJ13 [get_ports {sw[7]}]
 set_property IOSTANDARD LVCMOS25 [get_ports {sw[7]}]
+# Unmapped
+set_property IO_BUFFER_TYPE none [get_ports sw[5]]
+set_property IO_BUFFER_TYPE none [get_ports sw[4]]
+set_property IO_BUFFER_TYPE none [get_ports sw[3]]
+set_property IO_BUFFER_TYPE none [get_ports sw[2]]
+set_property IO_BUFFER_TYPE none [get_ports sw[1]]
+set_property IO_BUFFER_TYPE none [get_ports sw[0]]
+
+
 
 # Loopback control for UART
 #set_property IOSTANDARD LVCMOS12 [get_ports uart_lb_sw]
@@ -145,14 +140,24 @@ set_property IOSTANDARD LVCMOS25 [get_ports spi_data_in]
 #set_property IOSTANDARD LVCMOS33 [get_ports {leds[6]}]
 #set_property PACKAGE_PIN W23 [get_ports {leds[7]}]
 #set_property IOSTANDARD LVCMOS33 [get_ports {leds[7]}]
+# GPIO_LED_LEFT
 set_property PACKAGE_PIN Y21 [get_ports {leds[0]}]
 set_property IOSTANDARD LVCMOS25 [get_ports {leds[0]}]
+# GPIO_LED_CENTER
 set_property PACKAGE_PIN G2 [get_ports {leds[1]}]
 set_property IOSTANDARD LVCMOS15 [get_ports {leds[1]}]
+# GPIO_LED_RIGHT
 set_property PACKAGE_PIN W21 [get_ports {leds[2]}]
 set_property IOSTANDARD LVCMOS25 [get_ports {leds[2]}]
-set_property PACKAGE_PIN A17 [get_ports {leds[3]}]
-set_property IOSTANDARD LVCMOS15 [get_ports {leds[3]}]
+# GPIO_LED_0
+set_property PACKAGE_PIN A17 [get_ports {leds[5]}]
+set_property IOSTANDARD LVCMOS15 [get_ports {leds[5]}]
+# Left others unmapped (otherwise they will tied to GND or some random pins)
+set_property IO_BUFFER_TYPE none [get_ports leds[3]]
+set_property IO_BUFFER_TYPE none [get_ports leds[4]]
+set_property IO_BUFFER_TYPE none [get_ports leds[6]]
+set_property IO_BUFFER_TYPE none [get_ports leds[7]]
+
 
 ## OLED
 #set_property -dict {PACKAGE_PIN AC17 IOSTANDARD LVCMOS18} [get_ports oled_dc]
