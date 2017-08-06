@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Set DCI_CASCADE          
+# Set DCI_CASCADE
 set_property slave_banks {34} [get_iobanks 33]
 
 # Clock signals
@@ -46,12 +46,10 @@ set_property CLOCK_DEDICATED_ROUTE BACKBONE [get_nets chipset/clk_mmcm/inst/clk_
 # Reset
 #set_property IOSTANDARD LVCMOS33 [get_ports sys_rst_n]
 #set_property PACKAGE_PIN R19 [get_ports sys_rst_n]
-## PL_CPU_RESET
-#set_property PACKAGE_PIN A8 [get_ports sys_rst_n]
-#set_property IOSTANDARD LVCMOS15 [get_ports sys_rst_n]
-# GPIO_SW_LEFT
-set_property PACKAGE_PIN AK25 [get_ports sys_rst_n]
-set_property IOSTANDARD LVCMOS25 [get_ports sys_rst_n]
+# PL_CPU_RESET
+set_property PACKAGE_PIN A8 [get_ports sys_rst_n]
+set_property IOSTANDARD LVCMOS15 [get_ports sys_rst_n]
+
 
 
 # False paths
