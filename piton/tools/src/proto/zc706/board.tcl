@@ -28,7 +28,7 @@
 # Not intended to be run standalone
 #
 
-set BOARD_PART "xilinx.com:zc706:part0:1.4"
+set BOARD_PART "xilinx.com:zc706:part0:1.2"
 set FPGA_PART "xc7z045ffg900-2"
 set VIVADO_FLOW_PERF_OPT 0
 set BOARD_DEFAULT_VERILOG_MACROS "ZC706_BOARD"
