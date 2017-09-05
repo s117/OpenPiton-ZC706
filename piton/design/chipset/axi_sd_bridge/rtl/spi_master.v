@@ -244,7 +244,7 @@ module spi_master(
         .send_cmd_rdy            (send_cmd_rdy),
         .tx_data_empty           (tx_data_empty),
         .tx_data_full            (tx_data_full),
-        .tx_fifo_data            (tx_fifo_data),
+        .tx_fifo_data            (tx_fifo_data_out),
         .check_sum_byte          (check_sum_byte_rw_sd),
         .cmd_byte                (cmd_byte_rw_sd),
         .data_byte_1             (data_byte_1_rw_sd),
