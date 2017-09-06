@@ -136,7 +136,7 @@ module spi_master(
 
         .ctrl_status_data (ctrl_status_data),
         .rx_fifo_data     (rx_fifo_data),
-        .tx_fifo_data     (tx_fifo_data),
+        .tx_fifo_data     (tx_fifo_data_out),
 
         .ctrl_status_sel  (ctrl_status_sel),
         .rx_fifo_sel      (rx_fifo_sel),
