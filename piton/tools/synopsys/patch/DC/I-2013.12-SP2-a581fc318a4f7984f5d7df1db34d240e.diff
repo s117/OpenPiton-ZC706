@@ -1,7 +1,7 @@
 Only in script/common: common.excpt
 diff -erw .synrm_patch_tmp/common/common_setup.tcl script/common/common_setup.tcl
---- .synrm_patch_tmp/common/common_setup.tcl 2017-06-11 23:51:25.378733 -0400
-+++ script/common/common_setup.tcl 2017-06-11 23:51:25.378762 -0400
+--- .synrm_patch_tmp/common/common_setup.tcl 2017-09-21 23:20:18.148045 -0400
++++ script/common/common_setup.tcl 2017-09-21 23:20:18.148079 -0400
 56,75c
 # For synopsys scripts, library and search path setup
 #
@@ -131,8 +131,8 @@ puts "RM-Info: Running script [info script]\n"
 .
 Only in script/common: dbl_via_setup.tcl
 diff -erw .synrm_patch_tmp/common/dc_setup.tcl script/common/dc_setup.tcl
---- .synrm_patch_tmp/common/dc_setup.tcl 2017-06-11 23:51:25.379017 -0400
-+++ script/common/dc_setup.tcl 2017-06-11 23:51:25.379025 -0400
+--- .synrm_patch_tmp/common/dc_setup.tcl 2017-09-21 23:20:18.148338 -0400
++++ script/common/dc_setup.tcl 2017-09-21 23:20:18.148348 -0400
 181d
 155a
     # TLUplus files
@@ -193,9 +193,9 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/common_setup.tcl
 source -echo ${DV_ROOT}/tools/synopsys/script/common/dc_setup_filenames.tcl
 .
 diff -erw .synrm_patch_tmp/common/dc_setup_filenames.tcl script/common/dc_setup_filenames.tcl
---- .synrm_patch_tmp/common/dc_setup_filenames.tcl 2017-06-11 23:51:25.379146 -0400
-+++ script/common/dc_setup_filenames.tcl 2017-06-11 23:51:25.379153 -0400
-145,151d
+--- .synrm_patch_tmp/common/dc_setup_filenames.tcl 2017-09-21 23:20:18.148471 -0400
++++ script/common/dc_setup_filenames.tcl 2017-09-21 23:20:18.148479 -0400
+144,150d
 65a
 set DCRM_FINAL_CONSTRAINT_REPORT                        ${DESIGN_NAME}.mapped.constraint.rpt
 set DCRM_FINAL_VIOLATIONS_REPORT                        ${DESIGN_NAME}.mapped.violations.rpt
@@ -233,14 +233,14 @@ Only in script: merge_gds
 Only in script: par
 Only in script/rvs: fm.excpt
 diff -erw .synrm_patch_tmp/rvs/fm.tcl script/rvs/fm.tcl
---- .synrm_patch_tmp/rvs/fm.tcl 2017-06-11 23:51:25.379236 -0400
-+++ script/rvs/fm.tcl 2017-06-11 23:51:25.379250 -0400
-209a
+--- .synrm_patch_tmp/rvs/fm.tcl 2017-09-21 23:20:18.148871 -0400
++++ script/rvs/fm.tcl 2017-09-21 23:20:18.148895 -0400
+208a
+
 # Write out status
 set status_fp [open ${REPORTS_DIR}/${FMRM_MATCH_STATUS_REPORT} "w"]
 puts -nonewline $status_fp $fm_status
 close $status_fp
-
 .
 207a
   set fm_status "FAIL"
@@ -356,11 +356,11 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/fm_setup.tcl
 Only in script: sta
 Only in script/syn: dc.excpt
 diff -erw .synrm_patch_tmp/syn/dc.tcl script/syn/dc.tcl
---- .synrm_patch_tmp/syn/dc.tcl 2017-06-11 23:51:25.379491 -0400
-+++ script/syn/dc.tcl 2017-06-11 23:51:25.379499 -0400
-706a
-}
+--- .synrm_patch_tmp/syn/dc.tcl 2017-09-21 23:20:18.149129 -0400
++++ script/syn/dc.tcl 2017-09-21 23:20:18.149138 -0400
+705a
 
+}
 .
 659a
     # Create Design Compiler ILM for Hierarchical Flow

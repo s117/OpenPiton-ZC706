@@ -9,8 +9,8 @@ Only in script/common: floorplan
 Only in script/common: fm_setup.tcl
 Only in script/common: func
 diff -erw .synrm_patch_tmp/common/icc_setup.tcl script/common/icc_setup.tcl
---- .synrm_patch_tmp/common/icc_setup.tcl 2017-06-11 23:51:25.444534 -0400
-+++ script/common/icc_setup.tcl 2017-06-11 23:51:25.444561 -0400
+--- .synrm_patch_tmp/common/icc_setup.tcl 2017-09-21 23:20:18.201850 -0400
++++ script/common/icc_setup.tcl 2017-09-21 23:20:18.201871 -0400
 609a
 set high_fanout_net_threshold 500
 .
@@ -244,8 +244,8 @@ set ICC_CREATE_MODEL TRUE
 
 .
 diff -erw .synrm_patch_tmp/common/init_design_icc.tcl script/common/init_design_icc.tcl
---- .synrm_patch_tmp/common/init_design_icc.tcl 2017-06-11 23:51:25.445020 -0400
-+++ script/common/init_design_icc.tcl 2017-06-11 23:51:25.445028 -0400
+--- .synrm_patch_tmp/common/init_design_icc.tcl 2017-09-21 23:20:18.203318 -0400
++++ script/common/init_design_icc.tcl 2017-09-21 23:20:18.203333 -0400
 319,320c
 source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_optimization_settings_icc.tcl
 source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_placement_settings_icc.tcl
@@ -350,8 +350,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/common/outputs_icc.tcl script/common/outputs_icc.tcl
---- .synrm_patch_tmp/common/outputs_icc.tcl 2017-06-11 23:51:25.445229 -0400
-+++ script/common/outputs_icc.tcl 2017-06-11 23:51:25.445235 -0400
+--- .synrm_patch_tmp/common/outputs_icc.tcl 2017-09-21 23:20:18.203529 -0400
++++ script/common/outputs_icc.tcl 2017-09-21 23:20:18.203539 -0400
 96a
 
 .
@@ -464,15 +464,15 @@ Only in script/common: pt_eco_drc_buf.tcl
 Only in script/common: pt_setup.tcl
 Only in script/common: pyhp_preprocess_setup.tcl
 diff -erw .synrm_patch_tmp/common/settings/common_cts_settings_icc.tcl script/common/settings/common_cts_settings_icc.tcl
---- .synrm_patch_tmp/common/settings/common_cts_settings_icc.tcl 2017-06-11 23:51:25.445450 -0400
-+++ script/common/settings/common_cts_settings_icc.tcl 2017-06-11 23:51:25.445456 -0400
+--- .synrm_patch_tmp/common/settings/common_cts_settings_icc.tcl 2017-09-21 23:20:18.203778 -0400
++++ script/common/settings/common_cts_settings_icc.tcl 2017-09-21 23:20:18.203790 -0400
 0a
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/common/settings/common_optimization_settings_icc.tcl script/common/settings/common_optimization_settings_icc.tcl
---- .synrm_patch_tmp/common/settings/common_optimization_settings_icc.tcl 2017-06-11 23:51:25.445472 -0400
-+++ script/common/settings/common_optimization_settings_icc.tcl 2017-06-11 23:51:25.445478 -0400
-98a
+--- .synrm_patch_tmp/common/settings/common_optimization_settings_icc.tcl 2017-09-21 23:20:18.203808 -0400
++++ script/common/settings/common_optimization_settings_icc.tcl 2017-09-21 23:20:18.203816 -0400
+97a
 
 .
 0a
@@ -480,15 +480,15 @@ diff -erw .synrm_patch_tmp/common/settings/common_optimization_settings_icc.tcl 
 
 .
 diff -erw .synrm_patch_tmp/common/settings/common_placement_settings_icc.tcl script/common/settings/common_placement_settings_icc.tcl
---- .synrm_patch_tmp/common/settings/common_placement_settings_icc.tcl 2017-06-11 23:51:25.445505 -0400
-+++ script/common/settings/common_placement_settings_icc.tcl 2017-06-11 23:51:25.445536 -0400
+--- .synrm_patch_tmp/common/settings/common_placement_settings_icc.tcl 2017-09-21 23:20:18.203840 -0400
++++ script/common/settings/common_placement_settings_icc.tcl 2017-09-21 23:20:18.203849 -0400
 0a
 # Modified by Princeton University on April 3, 2016
 
 .
 diff -erw .synrm_patch_tmp/common/settings/common_post_cts_timing_settings.tcl script/common/settings/common_post_cts_timing_settings.tcl
---- .synrm_patch_tmp/common/settings/common_post_cts_timing_settings.tcl 2017-06-11 23:51:25.445560 -0400
-+++ script/common/settings/common_post_cts_timing_settings.tcl 2017-06-11 23:51:25.445566 -0400
+--- .synrm_patch_tmp/common/settings/common_post_cts_timing_settings.tcl 2017-09-21 23:20:18.203868 -0400
++++ script/common/settings/common_post_cts_timing_settings.tcl 2017-09-21 23:20:18.203883 -0400
 25,26c
     set_fix_hold_options -preferred_buffer -effort high
 .
@@ -497,16 +497,16 @@ diff -erw .synrm_patch_tmp/common/settings/common_post_cts_timing_settings.tcl s
 
 .
 diff -erw .synrm_patch_tmp/common/settings/common_route_opt_tio_settings_icc.tcl script/common/settings/common_route_opt_tio_settings_icc.tcl
---- .synrm_patch_tmp/common/settings/common_route_opt_tio_settings_icc.tcl 2017-06-11 23:51:25.445589 -0400
-+++ script/common/settings/common_route_opt_tio_settings_icc.tcl 2017-06-11 23:51:25.445596 -0400
+--- .synrm_patch_tmp/common/settings/common_route_opt_tio_settings_icc.tcl 2017-09-21 23:20:18.203915 -0400
++++ script/common/settings/common_route_opt_tio_settings_icc.tcl 2017-09-21 23:20:18.203924 -0400
 0a
 # Modified by Princeton University on April 3, 2016
 
 .
 diff -erw .synrm_patch_tmp/common/settings/common_route_si_settings_zrt_icc.tcl script/common/settings/common_route_si_settings_zrt_icc.tcl
---- .synrm_patch_tmp/common/settings/common_route_si_settings_zrt_icc.tcl 2017-06-11 23:51:25.445619 -0400
-+++ script/common/settings/common_route_si_settings_zrt_icc.tcl 2017-06-11 23:51:25.445626 -0400
-155d
+--- .synrm_patch_tmp/common/settings/common_route_si_settings_zrt_icc.tcl 2017-09-21 23:20:18.203960 -0400
++++ script/common/settings/common_route_si_settings_zrt_icc.tcl 2017-09-21 23:20:18.203971 -0400
+154d
 144a
        # add fixing antenna on PG
        set_route_zrt_detail_options -check_antenna_on_pg true
@@ -539,8 +539,8 @@ set_route_opt_strategy -search_repair_loop 500
 Only in script/common: vt_group_setup.tcl
 Only in script/eco: eco.sh
 diff -erw .synrm_patch_tmp/eco/eco_icc.tcl script/eco/eco_icc.tcl
---- .synrm_patch_tmp/eco/eco_icc.tcl 2017-06-11 23:51:25.445694 -0400
-+++ script/eco/eco_icc.tcl 2017-06-11 23:51:25.445701 -0400
+--- .synrm_patch_tmp/eco/eco_icc.tcl 2017-09-21 23:20:18.204044 -0400
++++ script/eco/eco_icc.tcl 2017-09-21 23:20:18.204052 -0400
 148c
         #signoff_metal_fill 
       
@@ -552,24 +552,24 @@ diff -erw .synrm_patch_tmp/eco/eco_icc.tcl script/eco/eco_icc.tcl
         # density errors automatically
 .
 132c
-        #report_physical_signoff_options  
-
         #signoff_metal_fill -purge
 .
 130c
         # TODO: Doing signoff metal fill currently causes an error (probably because we do not provide
         # a signoff fill runset).  For now we fix density errors manually.  This should be modified to fix
         # density errors automatically 
+
+        #report_physical_signoff_options  
 .
 112c
-        #report_physical_signoff_options  
-
         #signoff_metal_fill -remove_overlap_by_rules min_spacing
 .
 110c
         # TODO: Doing signoff metal fill currently causes an error (probably because we do not provide
         # a signoff fill runset).  For now we fix density errors manually.  This should be modified to fix
         # density errors automatically 
+
+        #report_physical_signoff_options  
 .
 84,85c
     if {$FILLER_CELL_METAL != ""} {insert_stdcell_filler -respect_keepout -cell_with_metal $FILLER_CELL_METAL -connect_to_power $MW_POWER_NET -connect_to_ground $MW_GROUND_NET}
@@ -593,8 +593,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 Only in script/eco: outputs_icc_eco.tcl
 Only in script: merge_gds
 diff -erw .synrm_patch_tmp/par/chip_finish_icc.tcl script/par/chip_finish_icc.tcl
---- .synrm_patch_tmp/par/chip_finish_icc.tcl 2017-06-11 23:51:25.445805 -0400
-+++ script/par/chip_finish_icc.tcl 2017-06-11 23:51:25.445812 -0400
+--- .synrm_patch_tmp/par/chip_finish_icc.tcl 2017-09-21 23:20:18.204156 -0400
++++ script/par/chip_finish_icc.tcl 2017-09-21 23:20:18.204165 -0400
 226,227c
 
 if {$ICC_FIX_ANTENNA} {
@@ -661,8 +661,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/clock_opt_cts_icc.tcl script/par/clock_opt_cts_icc.tcl
---- .synrm_patch_tmp/par/clock_opt_cts_icc.tcl 2017-06-11 23:51:25.445942 -0400
-+++ script/par/clock_opt_cts_icc.tcl 2017-06-11 23:51:25.445948 -0400
+--- .synrm_patch_tmp/par/clock_opt_cts_icc.tcl 2017-09-21 23:20:18.204308 -0400
++++ script/par/clock_opt_cts_icc.tcl 2017-09-21 23:20:18.204320 -0400
 146a
 if {[file exists [which $CUSTOM_CLOCK_OPT_CTS_POST_SCRIPT]]} {
 echo "RM-Info: Sourcing [which $CUSTOM_CLOCK_OPT_CTS_POST_SCRIPT]"
@@ -690,14 +690,14 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/clock_opt_psyn_icc.tcl script/par/clock_opt_psyn_icc.tcl
---- .synrm_patch_tmp/par/clock_opt_psyn_icc.tcl 2017-06-11 23:51:25.446006 -0400
-+++ script/par/clock_opt_psyn_icc.tcl 2017-06-11 23:51:25.446012 -0400
-150a
+--- .synrm_patch_tmp/par/clock_opt_psyn_icc.tcl 2017-09-21 23:20:18.204378 -0400
++++ script/par/clock_opt_psyn_icc.tcl 2017-09-21 23:20:18.204387 -0400
+148a
+}
+
 if {[file exists [which $CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT]]} {
 echo "RM-Info: Sourcing [which $CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT]"
 source $CUSTOM_CLOCK_OPT_PSYN_POST_SCRIPT
-}
-
 .
 84c
 psynopt -effort "high"
@@ -725,8 +725,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/clock_opt_route_icc.tcl script/par/clock_opt_route_icc.tcl
---- .synrm_patch_tmp/par/clock_opt_route_icc.tcl 2017-06-11 23:51:25.446081 -0400
-+++ script/par/clock_opt_route_icc.tcl 2017-06-11 23:51:25.446087 -0400
+--- .synrm_patch_tmp/par/clock_opt_route_icc.tcl 2017-09-21 23:20:18.204454 -0400
++++ script/par/clock_opt_route_icc.tcl 2017-09-21 23:20:18.204462 -0400
 118a
  redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.channel_cap {report_channel_capacity -consider_pins true -consider_global_routing true}
  redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.glbl_cong {report_congestion -routing_stage global}
@@ -770,8 +770,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/focal_opt_icc.tcl script/par/focal_opt_icc.tcl
---- .synrm_patch_tmp/par/focal_opt_icc.tcl 2017-06-11 23:51:25.446174 -0400
-+++ script/par/focal_opt_icc.tcl 2017-06-11 23:51:25.446180 -0400
+--- .synrm_patch_tmp/par/focal_opt_icc.tcl 2017-09-21 23:20:18.204548 -0400
++++ script/par/focal_opt_icc.tcl 2017-09-21 23:20:18.204556 -0400
 94c
  source -echo ${DV_ROOT}/tools/synopsys/script/common/settings/common_route_opt_tio_settings_icc.tcl
 .
@@ -798,8 +798,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 Only in script/par: icc.excpt
 Only in script/par: icc.sh
 diff -erw .synrm_patch_tmp/par/metal_fill_icc.tcl script/par/metal_fill_icc.tcl
---- .synrm_patch_tmp/par/metal_fill_icc.tcl 2017-06-11 23:51:25.446236 -0400
-+++ script/par/metal_fill_icc.tcl 2017-06-11 23:51:25.446242 -0400
+--- .synrm_patch_tmp/par/metal_fill_icc.tcl 2017-09-21 23:20:18.204611 -0400
++++ script/par/metal_fill_icc.tcl 2017-09-21 23:20:18.204620 -0400
 70c
     #signoff_metal_fill 
 .
@@ -855,8 +855,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/place_opt_icc.tcl script/par/place_opt_icc.tcl
---- .synrm_patch_tmp/par/place_opt_icc.tcl 2017-06-11 23:51:25.446361 -0400
-+++ script/par/place_opt_icc.tcl 2017-06-11 23:51:25.446369 -0400
+--- .synrm_patch_tmp/par/place_opt_icc.tcl 2017-09-21 23:20:18.204740 -0400
++++ script/par/place_opt_icc.tcl 2017-09-21 23:20:18.204751 -0400
 236a
     redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.channel_cap {report_channel_capacity -consider_pins true -consider_global_routing true}
     redirect -file $REPORTS_DIR_PLACE_OPT/$ICC_PLACE_OPT_CEL.glbl_cong {report_congestion -routing_stage global}
@@ -892,8 +892,8 @@ set DV_ROOT $::env(DV_ROOT)
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/route_icc.tcl script/par/route_icc.tcl
---- .synrm_patch_tmp/par/route_icc.tcl 2017-06-11 23:51:25.446443 -0400
-+++ script/par/route_icc.tcl 2017-06-11 23:51:25.446450 -0400
+--- .synrm_patch_tmp/par/route_icc.tcl 2017-09-21 23:20:18.204838 -0400
++++ script/par/route_icc.tcl 2017-09-21 23:20:18.204850 -0400
 149,153c
 if {$ICC_FIX_ANTENNA} {
    verify_zrt_route -antenna true ;
@@ -932,8 +932,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/route_opt_icc.tcl script/par/route_opt_icc.tcl
---- .synrm_patch_tmp/par/route_opt_icc.tcl 2017-06-11 23:51:25.446539 -0400
-+++ script/par/route_opt_icc.tcl 2017-06-11 23:51:25.446549 -0400
+--- .synrm_patch_tmp/par/route_opt_icc.tcl 2017-09-21 23:20:18.204946 -0400
++++ script/par/route_opt_icc.tcl 2017-09-21 23:20:18.204962 -0400
 202,203d
 195a
 #antenna fixing in the reference script is done in chip_finish_icc.tcl.
@@ -989,8 +989,8 @@ source -echo ${DV_ROOT}/tools/synopsys/script/common/icc_setup.tcl
 # Modified by Princeton University on April 3, 2016
 .
 diff -erw .synrm_patch_tmp/par/signoff_drc_icc.tcl script/par/signoff_drc_icc.tcl
---- .synrm_patch_tmp/par/signoff_drc_icc.tcl 2017-06-11 23:51:25.446661 -0400
-+++ script/par/signoff_drc_icc.tcl 2017-06-11 23:51:25.446667 -0400
+--- .synrm_patch_tmp/par/signoff_drc_icc.tcl 2017-09-21 23:20:18.205071 -0400
++++ script/par/signoff_drc_icc.tcl 2017-09-21 23:20:18.205080 -0400
 19c
   ## WA for STAR 9000440426 - Hercules - Could not open layer mapping file ../layer.map for reading,
   #  which will be fixed in ICC version 2010.12-SP5 and the WA will be removed in next RM release.
