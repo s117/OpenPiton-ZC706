@@ -213,7 +213,7 @@ wire se_l;
 
 assign se_l = ~se;
 
-`ifdef ZC706_BOARD
+`ifdef PITON_PROTO
     wire BUFHCE_clk_en;
 
     `ifdef NO_SCAN

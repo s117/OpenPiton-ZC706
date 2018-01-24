@@ -15,8 +15,8 @@ Only in script/common: pgn_setup.tcl
 Only in script/common: process_setup.tcl
 Only in script/common: pt_eco_drc_buf.tcl
 diff -erw .synrm_patch_tmp/common/pt_setup.tcl script/common/pt_setup.tcl
---- .synrm_patch_tmp/common/pt_setup.tcl 2017-06-11 23:51:24.120604 -0400
-+++ script/common/pt_setup.tcl 2017-06-11 23:51:24.120626 -0400
+--- .synrm_patch_tmp/common/pt_setup.tcl 2017-09-21 23:20:16.846647 -0400
++++ script/common/pt_setup.tcl 2017-09-21 23:20:16.846673 -0400
 87,89c
 set eco_hold_buf_list $eco_drc_buf_list
 .
@@ -94,8 +94,8 @@ Only in script: par
 Only in script: rvs
 Only in script/sta: pt.excpt
 diff -erw .synrm_patch_tmp/sta/pt.tcl script/sta/pt.tcl
---- .synrm_patch_tmp/sta/pt.tcl 2017-06-11 23:51:24.120784 -0400
-+++ script/sta/pt.tcl 2017-06-11 23:51:24.120791 -0400
+--- .synrm_patch_tmp/sta/pt.tcl 2017-09-21 23:20:16.846821 -0400
++++ script/sta/pt.tcl 2017-09-21 23:20:16.846831 -0400
 202a
 exit
 .

@@ -155,7 +155,7 @@ wire        m5stg_inc_exp_105;
 
 assign se_l = ~se;
 
-`ifdef ZC706_BOARD
+`ifdef PITON_PROTO
     wire BUFHCE_clk_en;
 
     `ifdef NO_SCAN
