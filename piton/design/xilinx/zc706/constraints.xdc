@@ -67,10 +67,12 @@ set_clock_groups -name sync_gr1 -logically_exclusive -group [get_clocks chipset_
 # | leds[6]            |  NONE            |
 # | leds[7]            |  NONE            |
 # |--------------------|------------------|
-# | sd_spi_cs          |  PMOD1_0_LS      |
-# | sd_spi_mosi        |  PMOD1_1_LS      |
-# | sd_spi_sck         |  PMOD1_2_LS      |
-# | sd_spi_miso        |  PMOD1_3_LS      |
+# | sd_dat[0]          |  PMOD1_0_LS      |
+# | sd_dat[1]          |  PMOD1_1_LS      |
+# | sd_dat[2]          |  PMOD1_2_LS      |
+# | sd_dat[3]          |  PMOD1_3_LS      |
+# | sd_cmd             |  PMOD1_4_LS      |
+# | sd_clk_out         |  PMOD1_5_LS      |
 # |--------------------|------------------|
 # | uart_rx            |  PMOD1_6_LS      |
 # | uart_tx            |  PMOD1_7_LS      |
@@ -101,10 +103,14 @@ set_property -dict {PACKAGE_PIN A17  IOSTANDARD LVCMOS15} [get_ports {leds[5]}]
 set_property IO_BUFFER_TYPE none [get_ports leds[6]]
 set_property IO_BUFFER_TYPE none [get_ports leds[7]]
 # SD
-set_property -dict {PACKAGE_PIN AJ21 IOSTANDARD LVCMOS25} [get_ports {spi_cs_n}]
-set_property -dict {PACKAGE_PIN AK21 IOSTANDARD LVCMOS25} [get_ports {spi_data_out}]
-set_property -dict {PACKAGE_PIN AB21 IOSTANDARD LVCMOS25} [get_ports {spi_clk_out}]
-set_property -dict {PACKAGE_PIN AB16 IOSTANDARD LVCMOS25} [get_ports {spi_data_in}]
+set_property -dict {PACKAGE_PIN AJ21 IOSTANDARD LVCMOS25} [get_ports {sd_dat[0]}]
+set_property -dict {PACKAGE_PIN AK21 IOSTANDARD LVCMOS25} [get_ports {sd_dat[1]}]
+set_property -dict {PACKAGE_PIN AB21 IOSTANDARD LVCMOS25} [get_ports {sd_dat[2]}]
+set_property -dict {PACKAGE_PIN AB16 IOSTANDARD LVCMOS25} [get_ports {sd_dat[3]}]
+set_property -dict {PACKAGE_PIN Y20  IOSTANDARD LVCMOS25} [get_ports {sd_cmd}]
+set_property -dict {PACKAGE_PIN AA20 IOSTANDARD LVCMOS25} [get_ports {sd_clk_out}]
+
+
 # UART
 set_property -dict {PACKAGE_PIN AC18 IOSTANDARD LVCMOS25} [get_ports {uart_rx}]
 set_property -dict {PACKAGE_PIN AC19 IOSTANDARD LVCMOS25} [get_ports {uart_tx}]
