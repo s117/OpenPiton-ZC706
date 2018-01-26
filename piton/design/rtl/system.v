@@ -207,7 +207,7 @@ module system(
 `endif // endif PITONSYS_UART
 
 `ifdef PITONSYS_SPI
-    `ifndef VC707_BOARD
+    `ifndef PITON_SD_NOCD_NORST
     input                                       sd_cd,
     output                                      sd_reset,
     `endif
@@ -812,7 +812,7 @@ chipset chipset(
 `endif // endif PITONSYS_UART
 
 `ifdef PITONSYS_SPI
-    `ifndef VC707_BOARD
+    `ifndef PITON_SD_NOCD_NORST
     .sd_cd(sd_cd),
     .sd_reset(sd_reset),
     `endif

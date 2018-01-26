@@ -253,7 +253,7 @@ module chipset(
 
 
     `ifdef PITONSYS_SPI
-        `ifndef VC707_BOARD
+        `ifndef PITON_SD_NOCD_NORST
         input                                       sd_cd,
         output                                      sd_reset,
         `endif
@@ -1184,7 +1184,7 @@ chipset_impl_noc_power_test  chipset_impl (
         `ifdef PITONSYS_SPI
             ,
             .sd_clk(sd_sys_clk),
-            `ifndef VC707_BOARD
+            `ifndef PITON_SD_NOCD_NORST
             .sd_cd(sd_cd),
             .sd_reset(sd_reset),
             `else
